@@ -21,7 +21,10 @@ h1{font-size:clamp(1.3rem,2.6vw,1.8rem);line-height:1.25;margin:10px 0 6px}
 .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);margin:0 0 6px}
 .badge{font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:999px}
 .ok{color:var(--ok);background:var(--ok-bg)}.fail{color:var(--fail);background:var(--fail-bg)}
-.intro{color:var(--muted);max-width:820px;margin:0 0 20px}
+.intro{color:var(--muted);max-width:820px;margin:0 0 12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:.85rem;color:var(--muted);margin:0 0 20px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:-10px}
+.sw.own{background:var(--accent)}.sw.tool{background:#c08a2b}.sw.grip{background:var(--ok)}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}
 .player{position:sticky;top:16px}
 video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px}
@@ -36,7 +39,10 @@ video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:1
 .step:hover{background:var(--code)}.step.active{background:var(--active)}
 .t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem;padding-top:2px}
 .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--muted)}
-.k-script .dot,.k-analysis .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-script .dot,.k-analysis .dot,.k-ownmove .dot,.k-ownrun .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-ros2 .dot{background:var(--accent)}
+.k-script,.k-ownmove{box-shadow:inset 3px 0 0 var(--accent)}
+.k-script .tag,.k-analysis .tag,.k-ownmove .tag,.k-ownrun .tag,.k-ros2 .tag{color:var(--accent)}
 .k-locate .dot{background:#8a5cc2}.k-read .dot{background:var(--line);border:1px solid var(--muted)}
 .tag{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
 details,.peek{grid-column:3}
@@ -56,6 +62,7 @@ pre.out{color:var(--muted)}
 <div class="meta"><strong>Trial 2</strong><span class="badge ok">Success</span><span>11:25 end-to-end time</span></div>
 
 <p class="intro">Key commands and code the agent wrote and ran in this trial, grouped under the status notes it wrote while working. Click a step to jump the video to that moment; the clock matches the counter in the video.</p>
+<p class="legend"><span class="sw own"></span>Code the agent wrote: its own programs and inline code <span class="sw tool"></span>Starter tools provided in the workspace <span class="sw grip"></span>Gripper</p>
 <div class="layout">
 <div class="trace"><div class="phase"><div class="say" data-t="5.1"><span class="t">00:05</span><span>“I’ll read the project and robot instructions, inspect the current scene, then move the tape onto the pink plate and verify its placement.”</span></div><div class="step k-read" data-t="6.2" data-kind="Docs" data-label="Reads robot documentation and tools"><span class="t">00:06</span><span class="dot"></span><span><span class="tag">Docs</span>Reads robot documentation and tools</span><pre class="peek">ls -la
 cat /robot/README.md</pre><details><summary>all commands (7)</summary><pre>ls -la
@@ -64,7 +71,7 @@ cat AGENTS.md /robot/skills.md
 cat .openrua/skills.json
 rg --files -g &#x27;!runs/**&#x27; .agents .claude
 cat /robot/machine.yaml /robot/docs/10-machine.md /robot/docs/20-perception.md /robot/docs/30-action.md /robot/docs/40-patterns.md /robot/tools/README.md
-…</pre></details></div></div><div class="phase"><div class="say" data-t="40.5"><span class="t">00:40</span><span>“I found the tape beside the blue cup and basket, with the pink plate to its right. The wrist camera calibration is approximate, so I’m using fresh views and short, checked movements to line up the grasp.”</span></div><div class="step k-locate" data-t="41.1" data-kind="Perception" data-label="Converts a camera pixel to a 3-D point"><span class="t">00:41</span><span class="dot"></span><span><span class="tag">Perception</span>Converts a camera pixel to a 3-D point</span><pre class="peek">python3 /robot/tools/perception/px2world.py zed_wrist 460 190</pre><details><summary>all commands and output</summary><pre>python3 /robot/tools/perception/px2world.py zed_wrist 460 190</pre><pre class="out">0.4985 0.2093 -0.0053
+…</pre></details></div></div><div class="phase"><div class="say" data-t="40.5"><span class="t">00:40</span><span>“I found the tape beside the blue cup and basket, with the pink plate to its right. The wrist camera calibration is approximate, so I’m using fresh views and short, checked movements to line up the grasp.”</span></div><div class="step k-locate" data-t="41.1" data-kind="Starter tool" data-label="Converts a camera pixel to a 3-D point with starter tool px2world.py"><span class="t">00:41</span><span class="dot"></span><span><span class="tag">Starter tool</span>Converts a camera pixel to a 3-D point with starter tool px2world.py</span><pre class="peek">python3 /robot/tools/perception/px2world.py zed_wrist 460 190</pre><details><summary>all commands and output</summary><pre>python3 /robot/tools/perception/px2world.py zed_wrist 460 190</pre><pre class="out">0.4985 0.2093 -0.0053
 [INFO] [1794570212.041292003] [tf2_echo]: Waiting for transform panda_link0 -&gt;  panda_link8: Invalid frame ID &quot;panda_link0&quot; passed to canTransform argument target_frame - frame does not exist
 At time 1794570213.997528232
 - Translation: [0.542, 0.210, 0.358]
@@ -74,11 +81,59 @@ At time 1794570213.997528232
 - Matrix:
  -0.034 -0.999 -0.024  0.542
  -0.999  0.035 -0.004  0.210
-…</pre></details></div><div class="step k-move" data-t="51.2" data-kind="Motion" data-label="Moves the hand in 4 small steps, checking fresh camera images"><span class="t">00:51</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 4 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.538 0.210 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp
+…</pre></details></div><div class="step k-move" data-t="51.2" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 4 small steps, checking fresh camera images"><span class="t">00:51</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 4 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.538 0.210 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp
 python3 /robot/tools/action/ik_move.py 0.538 0.115 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp</pre><details><summary>all commands (4)</summary><pre>python3 /robot/tools/action/ik_move.py 0.538 0.210 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp
 python3 /robot/tools/action/ik_move.py 0.538 0.115 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp
 python3 /robot/tools/action/ik_move.py 0.50 0.04 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp
-python3 /robot/tools/action/ik_move.py 0.44 -0.035 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="130.2"><span class="t">02:10</span><span>“The tape is leaning against the containers. I’m moving above its exposed rim so the gripper can pinch one section of the roll without disturbing the nearby objects.”</span></div><div class="step k-move" data-t="131.6" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">02:11</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.40 -0.105 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></div><div class="step k-analysis" data-t="154.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">02:34</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+python3 /robot/tools/action/ik_move.py 0.44 -0.035 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></details></div><div class="step k-script" data-t="124.4" data-kind="Own program" data-label="Writes its own program observe.py (38 lines): “Save timestamped RGB/depth, camera intrinsics, joints and TF”"><span class="t">02:04</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program observe.py (38 lines): “Save timestamped RGB/depth, camera intrinsics, joints and TF”</span><pre class="peek">#!/usr/bin/env python3
+&quot;&quot;&quot;Save timestamped RGB/depth, camera intrinsics, joints and TF. Read only.
+Requires robot ROS environment, rclpy, cv_bridge, numpy, scipy, PyYAML.
+&quot;&quot;&quot;
+from pathlib import Path
+import datetime,json,time
+import rclpy,yaml,cv2,numpy as np
+from sensor_msgs.msg import Image,CameraInfo,JointState
+from cv_bridge import CvBridge
+from tf2_ros import Buffer,TransformListener
+from scipy.spatial.transform import Rotation
+rclpy.init(); n=rclpy.create_node(&#x27;task_observe&#x27;); b=Buffer(); listener=TransformListener(b,n)</pre><details><summary>full program (38 lines)</summary><pre>#!/usr/bin/env python3
+&quot;&quot;&quot;Save timestamped RGB/depth, camera intrinsics, joints and TF. Read only.
+Requires robot ROS environment, rclpy, cv_bridge, numpy, scipy, PyYAML.
+&quot;&quot;&quot;
+from pathlib import Path
+import datetime,json,time
+import rclpy,yaml,cv2,numpy as np
+from sensor_msgs.msg import Image,CameraInfo,JointState
+from cv_bridge import CvBridge
+from tf2_ros import Buffer,TransformListener
+from scipy.spatial.transform import Rotation
+rclpy.init(); n=rclpy.create_node(&#x27;task_observe&#x27;); b=Buffer(); listener=TransformListener(b,n)
+m=yaml.safe_load(open(&#x27;/robot/machine.yaml&#x27;)); got={}; bridge=CvBridge()
+root=Path(&#x27;/workspace/observations&#x27;)/datetime.datetime.now(datetime.timezone.utc).strftime(&#x27;%Y%m%dT%H%M%SZ&#x27;);root.mkdir(parents=True)
+def cb(key):
+ return lambda msg: got.__setitem__(key,msg)
+cams=[s for s in m[&#x27;sensors&#x27;] if s[&#x27;kind&#x27;]==&#x27;camera&#x27;]
+for c in cams:
+ for k,typ in [(&#x27;color&#x27;,Image),(&#x27;depth&#x27;,Image),(&#x27;info&#x27;,CameraInfo)]:n.create_subscription(typ,c[k],cb(c[&#x27;name&#x27;]+&#x27;_&#x27;+k),1)
+n.create_subscription(JointState,&#x27;/joint_states&#x27;,cb(&#x27;joints&#x27;),1)
+end=time.monotonic()+12
+while time.monotonic()&lt;end:
+ rclpy.spin_once(n,timeout_sec=.1)
+ if len(got)==10 and b.can_transform(&#x27;panda_link0&#x27;,&#x27;robotiq_pinch&#x27;,rclpy.time.Time()):break
+meta={&#x27;acquired_utc&#x27;:root.name,&#x27;transforms&#x27;:{}}
+frames=[&#x27;panda_link8&#x27;,&#x27;robotiq_pinch&#x27;]
+for c in cams:
+ name=c[&#x27;name&#x27;];info=got[name+&#x27;_info&#x27;];frames.append(info.header.frame_id)
+ cv2.imwrite(str(root/(name+&#x27;.png&#x27;)),bridge.imgmsg_to_cv2(got[name+&#x27;_color&#x27;],&#x27;bgr8&#x27;))
+ d=bridge.imgmsg_to_cv2(got[name+&#x27;_depth&#x27;],&#x27;passthrough&#x27;);np.save(root/(name+&#x27;_depth.npy&#x27;),d)
+ meta[name]={&#x27;K&#x27;:list(info.k),&#x27;frame&#x27;:info.header.frame_id,&#x27;encoding&#x27;:got[name+&#x27;_depth&#x27;].encoding}
+for f in frames:
+ if b.can_transform(&#x27;panda_link0&#x27;,f,rclpy.time.Time()):
+  t=b.lookup_transform(&#x27;panda_link0&#x27;,f,rclpy.time.Time()).transform
+  p=[t.translation.x,t.translation.y,t.translation.z];q=[t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w]
+  meta[&#x27;transforms&#x27;][f]={&#x27;xyz&#x27;:p,&#x27;xyzw&#x27;:q}
+js=got[&#x27;joints&#x27;];meta[&#x27;joints&#x27;]=dict(zip(js.name,js.position))
+(root/&#x27;state.json&#x27;).write_text(json.dumps(meta,indent=2));print(root);print(json.dumps(meta[&#x27;transforms&#x27;],indent=2));rclpy.shutdown()</pre></details></div></div><div class="phase"><div class="say" data-t="130.2"><span class="t">02:10</span><span>“The tape is leaning against the containers. I’m moving above its exposed rim so the gripper can pinch one section of the roll without disturbing the nearby objects.”</span></div><div class="step k-move" data-t="131.6" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py"><span class="t">02:11</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.40 -0.105 0.29 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></div><div class="step k-analysis" data-t="154.1" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">02:34</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 from scipy.spatial.transform import Rotation as R
 p=&#x27;observations/20261113T114508Z/&#x27;;m=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
 for u,v in [(520,265),(600,340),(590,360),(505,440),(650,320)]:
@@ -96,16 +151,80 @@ print(&#x27;K&#x27;,K)</pre><pre class="out">520 265 0.3459859 [ 0.38781698 -0.1
 tcp pixel [601.34530628 381.67589521   1.        ] cam [0.02839697 0.02632533 0.15670175]
 K [[698.54077148   0.         474.75805664]
  [  0.         698.54077148 264.32357788]
- [  0.           0.           1.        ]]</pre></details></div><div class="step k-move" data-t="160.2" data-kind="Motion" data-label="Moves the hand in 2 small steps"><span class="t">02:40</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 2 small steps</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.429 -0.180 0.235 -0.695 0.719 0.007 -0.010 4 --at tcp
-python3 /robot/tools/action/ik_move.py 0.415 -0.14 0.275 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="186.5"><span class="t">03:06</span><span>“The motion guard rejected two inverse-kinematics solutions because they required large joint changes; neither moved the arm. I’m checking a local solution from the current posture before continuing the approach.”</span></div><div class="step k-read" data-t="188.2" data-kind="Docs" data-label="Reads the gripper geometry from the robot description"><span class="t">03:08</span><span class="dot"></span><span><span class="tag">Docs</span>Reads the gripper geometry from the robot description</span><pre class="peek">ros2 topic echo /robot_description --once --qos-durability transient_local &gt; observations/20261…
-import importlib.util</pre><details><summary>all commands (4)</summary><pre>ros2 topic echo /robot_description --once --qos-durability transient_local &gt; observations/20261113/robot_description.txt; ros2 service list | rg &#x27;fk|ik&#x27;; python3 - &lt;&lt;&#x27;PY&#x27;
-import importlib.util
-for x in [&#x27;kdl_parser_py&#x27;,&#x27;PyKDL&#x27;,&#x27;urdf_parser_py&#x27;]:print(x,importlib.util.find_spec(x))
-PY</pre></details></div><div class="step k-analysis" data-t="204.8" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:24</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import importlib.util
+ [  0.           0.           1.        ]]</pre></details></div><div class="step k-move" data-t="160.2" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 2 small steps, checking fresh camera images with its own observe.py"><span class="t">02:40</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 2 small steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.429 -0.180 0.235 -0.695 0.719 0.007 -0.010 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.415 -0.14 0.275 -0.695 0.719 0.007 -0.010 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="186.5"><span class="t">03:06</span><span>“The motion guard rejected two inverse-kinematics solutions because they required large joint changes; neither moved the arm. I’m checking a local solution from the current posture before continuing the approach.”</span></div><div class="step k-analysis" data-t="188.2" data-kind="Own code" data-label="Runs its own code to read the robot model"><span class="t">03:08</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to read the robot model</span><pre class="peek">import importlib.util
+for x in [&#x27;kdl_parser_py&#x27;,&#x27;PyKDL&#x27;,&#x27;urdf_parser_py&#x27;]:print(x,importlib.util.find_spec(x))</pre></div><div class="step k-analysis" data-t="204.8" data-kind="Own code" data-label="Runs its own code to read the robot model"><span class="t">03:24</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to read the robot model</span><pre class="peek">import importlib.util
 for x in [&#x27;kdl_parser_py&#x27;,&#x27;PyKDL&#x27;,&#x27;urdf_parser_py&#x27;]:print(x,importlib.util.find_spec(x))</pre><details><summary>full code (2 lines) and output</summary><pre>import importlib.util
 for x in [&#x27;kdl_parser_py&#x27;,&#x27;PyKDL&#x27;,&#x27;urdf_parser_py&#x27;]:print(x,importlib.util.find_spec(x))</pre><pre class="out">kdl_parser_py None
 PyKDL ModuleSpec(name=&#x27;PyKDL&#x27;, loader=&lt;_frozen_importlib_external.ExtensionFileLoader object at 0x723e86d4bd60&gt;, origin=&#x27;/usr/lib/python3/dist-packages/PyKDL.cpython-310-x86_64-linux-gnu.so&#x27;)
-urdf_parser_py ModuleSpec(name=&#x27;urdf_parser_py&#x27;, loader=&lt;_frozen_importlib_external.SourceFileLoader object at 0x723e86d4ab60&gt;, origin=&#x27;/opt/ros/humble/lib/python3.10/site-packages/urdf_parser_py/__init__.py&#x27;, submodule_search_locations=[&#x27;/opt/ros/humble/lib/python3.10/site-packages/urdf_parser_py&#x27;])</pre></details></div><div class="step k-analysis" data-t="285.5" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">04:45</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+urdf_parser_py ModuleSpec(name=&#x27;urdf_parser_py&#x27;, loader=&lt;_frozen_importlib_external.SourceFileLoader object at 0x723e86d4ab60&gt;, origin=&#x27;/opt/ros/humble/lib/python3.10/site-packages/urdf_parser_py/__init__.py&#x27;, submodule_search_locations=[&#x27;/opt/ros/humble/lib/python3.10/site-packages/urdf_parser_py&#x27;])</pre></details></div><div class="step k-script" data-t="242.4" data-kind="Own program" data-label="Writes its own program local_move.py (55 lines): “Solve a nearby Cartesian TCP translation from fresh joints and live URDF”, then moves the hand with its own program local_move.py"><span class="t">04:02</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program local_move.py (55 lines): “Solve a nearby Cartesian TCP translation from fresh joints and live URDF”, then moves the hand with its own program local_move.py</span><pre class="peek">#!/usr/bin/env python3
+&quot;&quot;&quot;Solve a nearby Cartesian TCP translation from fresh joints and live URDF.
+Keep current hand orientation. Verify model against fresh TF; execute only via
+/robot/tools/action/fjt_send.py, preserving its guard. No collision planner:
+operator must assess scene and swept clearance. Use --execute for motion.
+Dependencies: robot ROS environment, numpy, scipy, PyYAML.
+&quot;&quot;&quot;
+import argparse, subprocess,xml.etree.ElementTree as ET,time,json
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+from scipy.optimize import least_squares
+import rclpy,yaml</pre><details><summary>full program (56 lines)</summary><pre>#!/usr/bin/env python3
+&quot;&quot;&quot;Solve a nearby Cartesian TCP translation from fresh joints and live URDF.
+Keep current hand orientation. Verify model against fresh TF; execute only via
+/robot/tools/action/fjt_send.py, preserving its guard. No collision planner:
+operator must assess scene and swept clearance. Use --execute for motion.
+Dependencies: robot ROS environment, numpy, scipy, PyYAML.
+&quot;&quot;&quot;
+import argparse, subprocess,xml.etree.ElementTree as ET,time,json
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+from scipy.optimize import least_squares
+import rclpy,yaml
+from sensor_msgs.msg import JointState
+from tf2_ros import Buffer,TransformListener
+p=argparse.ArgumentParser(description=__doc__)
+for k in [&#x27;x&#x27;,&#x27;y&#x27;,&#x27;z&#x27;]:p.add_argument(k,type=float)
+p.add_argument(&#x27;--execute&#x27;,action=&#x27;store_true&#x27;);p.add_argument(&#x27;--seconds&#x27;,type=float,default=4);a=p.parse_args()
+m=yaml.safe_load(open(&#x27;/robot/machine.yaml&#x27;));arm=next(e for e in m[&#x27;actuators&#x27;] if e[&#x27;kind&#x27;]==&#x27;joint_trajectory&#x27;);names=arm[&#x27;joints&#x27;]
+raw=subprocess.check_output([&#x27;ros2&#x27;,&#x27;param&#x27;,&#x27;get&#x27;,&#x27;/robot_state_publisher&#x27;,&#x27;robot_description&#x27;],text=True,timeout=12)
+root=ET.fromstring(raw[raw.index(&#x27;&lt;robot&#x27;):]);bychild={j.find(&#x27;child&#x27;).get(&#x27;link&#x27;):j for j in root.findall(&#x27;joint&#x27;)}
+chain=[];link=&#x27;robotiq_pinch&#x27;
+while link!=&#x27;panda_link0&#x27;:
+ j=bychild[link];chain.append(j);link=j.find(&#x27;parent&#x27;).get(&#x27;link&#x27;)
+chain=chain[::-1]
+def vec(e,k,default):return np.fromstring(e.get(k,default) if e is not None else default,sep=&#x27; &#x27;)
+steps=[]
+for j in chain:
+ o=j.find(&#x27;origin&#x27;);T=np.eye(4);T[:3,3]=vec(o,&#x27;xyz&#x27;,&#x27;0 0 0&#x27;);T[:3,:3]=R.from_euler(&#x27;xyz&#x27;,vec(o,&#x27;rpy&#x27;,&#x27;0 0 0&#x27;)).as_matrix();steps.append((j.get(&#x27;name&#x27;),j.get(&#x27;type&#x27;),T,vec(j.find(&#x27;axis&#x27;),&#x27;xyz&#x27;,&#x27;1 0 0&#x27;)))
+def fk(q):
+ T=np.eye(4)
+ for name,typ,orig,axis in steps:
+  T=T@orig
+  if typ!=&#x27;fixed&#x27;:
+   if name not in names:raise RuntimeError(&#x27;Unexpected moving joint &#x27;+name)
+   A=np.eye(4);A[:3,:3]=R.from_rotvec(axis*q[names.index(name)]).as_matrix();T=T@A
+ return T
+rclpy.init();n=rclpy.create_node(&#x27;local_ik_check&#x27;);b=Buffer();l=TransformListener(b,n);got={}
+n.create_subscription(JointState,&#x27;/joint_states&#x27;,lambda msg:got.update(js=msg),1)
+end=time.monotonic()+10
+while time.monotonic()&lt;end:
+ rclpy.spin_once(n,timeout_sec=.1)
+ if &#x27;js&#x27; in got and b.can_transform(&#x27;panda_link0&#x27;,&#x27;robotiq_pinch&#x27;,rclpy.time.Time()):break
+js=dict(zip(got[&#x27;js&#x27;].name,got[&#x27;js&#x27;].position));q=np.array([js[x] for x in names]);T0=fk(q)
+t=b.lookup_transform(&#x27;panda_link0&#x27;,&#x27;robotiq_pinch&#x27;,rclpy.time.Time()).transform;actual=np.array([t.translation.x,t.translation.y,t.translation.z]);actualR=R.from_quat([t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w]).as_matrix()
+assert np.linalg.norm(T0[:3,3]-actual)&lt;.003,&#x27;FK/TF position mismatch&#x27;
+assert R.from_matrix(T0[:3,:3]@actualR.T).magnitude()&lt;.02,&#x27;FK/TF rotation mismatch&#x27;
+target=np.array([a.x,a.y,a.z]);assert np.linalg.norm(target-actual)&lt;.13,&#x27;Target must be nearby&#x27;
+def residual(q1):
+ T=fk(q1);return np.r_[T[:3,3]-target,.3*R.from_matrix(T[:3,:3]@T0[:3,:3].T).as_rotvec()]
+lim=np.array(arm[&#x27;limits_rad&#x27;]);lo=np.maximum(lim[:,0]+.005,q-.45);hi=np.minimum(lim[:,1]-.005,q+.45)
+sol=least_squares(residual,q,bounds=(lo,hi),max_nfev=100,gtol=1e-10,ftol=1e-10,xtol=1e-10)
+err=residual(sol.x);print(json.dumps({&#x27;current_tcp&#x27;:actual.tolist(),&#x27;target_tcp&#x27;:target.tolist(),&#x27;solution&#x27;:sol.x.tolist(),&#x27;delta&#x27;:(sol.x-q).tolist(),&#x27;residual&#x27;:err.tolist()}),flush=True)
+assert np.linalg.norm(err[:3])&lt;.001 and np.linalg.norm(err[3:])&lt;.001,&#x27;No accurate local solution&#x27;
+rclpy.shutdown()
+if a.execute:subprocess.run([&#x27;python3&#x27;,&#x27;/robot/tools/action/fjt_send.py&#x27;,&#x27;,&#x27;.join(map(str,sol.x)),str(a.seconds)],check=True)
+python3 scripts/local_move.py 0.415 -0.14 0.275</pre></details></div><div class="step k-ownmove" data-t="249.1" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py"><span class="t">04:09</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.415 -0.14 0.275 --execute
+python3 scripts/local_move.py 0.429 -0.180 0.225 --execute</pre></div><div class="step k-analysis" data-t="285.5" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">04:45</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 from scipy.spatial.transform import Rotation as R
 p=&#x27;observations/20261113T114721Z/&#x27;;m=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
 for u,v in [(570,250),(567,280),(548,310),(455,146),(460,375)]:
@@ -117,14 +236,26 @@ for u,v in [(570,250),(567,280),(548,310),(455,146),(460,375)]:
 567 280 0.28458977 [ 0.42967376 -0.19840022  0.0940915 ]
 548 310 0.2890755 [ 0.42162379 -0.21123712  0.0939188 ]
 455 146 0.2655058 [ 0.38799703 -0.14111413  0.0981494 ]
-460 375 0.29820657 [ 0.38335018 -0.23881467  0.09523348]</pre></details></div></div><div class="phase"><div class="say" data-t="316.3"><span class="t">05:16</span><span>“The local solution passed the motion checks, and the gripper is now above the tape’s rim. I’ll lower it in small steps, close on the rim, and check that the tape lifts clear.”</span></div><div class="step k-gripper" data-t="360.9" data-kind="Gripper" data-label="Closes the gripper"><span class="t">06:00</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div></div><div class="phase"><div class="say" data-t="429.7"><span class="t">07:09</span><span>“The tape is securely held and has lifted clear of the containers. I’m carrying it above the table toward the pink plate.”</span></div><div class="step k-analysis" data-t="460.7" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">07:40</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">p=&#x27;scripts/local_move.py&#x27;
+460 375 0.29820657 [ 0.38335018 -0.23881467  0.09523348]</pre></details></div><div class="step k-ownmove" data-t="294.9" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py"><span class="t">04:54</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.432 -0.198 0.165 --execute</pre></div></div><div class="phase"><div class="say" data-t="316.3"><span class="t">05:16</span><span>“The local solution passed the motion checks, and the gripper is now above the tape’s rim. I’ll lower it in small steps, close on the rim, and check that the tape lifts clear.”</span></div><div class="step k-ownmove" data-t="316.8" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py"><span class="t">05:16</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.431 -0.198 0.125 --execute</pre></div><div class="step k-ownmove" data-t="340.6" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py"><span class="t">05:40</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.431 -0.198 0.100 --execute</pre></div><div class="step k-ownmove" data-t="360.9" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 3 steps, then closes the gripper, checking fresh camera images with its own observe.py"><span class="t">06:00</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 3 steps, then closes the gripper, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.431 -0.198 0.085 --execute
+python3 /robot/tools/action/gripper_cmd.py closed</pre><details><summary>all commands (4)</summary><pre>python3 scripts/local_move.py 0.431 -0.198 0.085 --execute
+python3 /robot/tools/action/gripper_cmd.py closed
+python3 scripts/local_move.py 0.431 -0.198 0.145 --execute
+python3 scripts/local_move.py 0.431 -0.198 0.23 --execute</pre></details></div><div class="step k-ownmove" data-t="416.0" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py"><span class="t">06:55</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.475 -0.13 0.28 --execute</pre></div></div><div class="phase"><div class="say" data-t="429.7"><span class="t">07:09</span><span>“The tape is securely held and has lifted clear of the containers. I’m carrying it above the table toward the pink plate.”</span></div><div class="step k-ownmove" data-t="430.5" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py"><span class="t">07:10</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.515 -0.045 0.28 --execute
+python3 scripts/local_move.py 0.54 0.045 0.28 --execute</pre></div><div class="step k-analysis" data-t="460.7" data-kind="Own code" data-label="Runs its own code to inspect saved observations, then moves the hand with its own program local_move.py"><span class="t">07:40</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to inspect saved observations, then moves the hand with its own program local_move.py</span><pre class="peek">p=&#x27;scripts/local_move.py&#x27;
 s=open(p).read().replace(&quot;.3*R.from_matrix(T[:3,:3]@T0[:3,:3].T).as_rotvec()]&quot;, &quot;.3*R.from_matr…
-open(p,&#x27;w&#x27;).write(s)</pre><details><summary>full code (3 lines) and output</summary><pre>p=&#x27;scripts/local_move.py&#x27;
+open(p,&#x27;w&#x27;).write(s)
+python3 scripts/local_move.py 0.54 0.045 0.28 --execute</pre><details><summary>full code (4 lines) and output</summary><pre>p=&#x27;scripts/local_move.py&#x27;
 s=open(p).read().replace(&quot;.3*R.from_matrix(T[:3,:3]@T0[:3,:3].T).as_rotvec()]&quot;, &quot;.3*R.from_matrix(T[:3,:3]@T0[:3,:3].T).as_rotvec(),1e-4*(q1-q)]&quot;).replace(&#x27;max_nfev=100&#x27;,&#x27;max_nfev=200&#x27;)
-open(p,&#x27;w&#x27;).write(s)</pre><pre class="out">{&quot;current_tcp&quot;: [0.5141757909077057, -0.045187661415503344, 0.277669028525939], &quot;target_tcp&quot;: [0.54, 0.045, 0.28], &quot;solution&quot;: [2.199762075796477, -0.04744815646138102, -2.124627521431551, -1.992482412109506, 0.011304804833919187, 1.9497446814364914, 1.658787721235594], &quot;delta&quot;: [0.11820229973653085, -0.1217893580121084, 0.08048809090800413, 0.08669656773068901, -0.09235492493160197, -0.006672890465783787, 0.24142781800342572], &quot;residual&quot;: [-2.4877337745365935e-08, -7.665842668980183e-09, 3.3430538892709194e-09, 1.3113779073441573e-08, -2.215560431986388e-08, 6.12645111497318e-09, 1.1820229973653085e-05, -1.217893580121084e-05, 8.048809090800414e-06, 8.669656773068901e-06, -9.235492493160196e-06, -6.672890465783788e-07, 2.4142781800342574e-05]}
+open(p,&#x27;w&#x27;).write(s)
+python3 scripts/local_move.py 0.54 0.045 0.28 --execute</pre><pre class="out">{&quot;current_tcp&quot;: [0.5141757909077057, -0.045187661415503344, 0.277669028525939], &quot;target_tcp&quot;: [0.54, 0.045, 0.28], &quot;solution&quot;: [2.199762075796477, -0.04744815646138102, -2.124627521431551, -1.992482412109506, 0.011304804833919187, 1.9497446814364914, 1.658787721235594], &quot;delta&quot;: [0.11820229973653085, -0.1217893580121084, 0.08048809090800413, 0.08669656773068901, -0.09235492493160197, -0.006672890465783787, 0.24142781800342572], &quot;residual&quot;: [-2.4877337745365935e-08, -7.665842668980183e-09, 3.3430538892709194e-09, 1.3113779073441573e-08, -2.215560431986388e-08, 6.12645111497318e-09, 1.1820229973653085e-05, -1.217893580121084e-05, 8.048809090800414e-06, 8.669656773068901e-06, -9.235492493160196e-06, -6.672890465783788e-07, 2.4142781800342574e-05]}
 trajectory_target {&quot;joints&quot;: [&quot;panda_joint1&quot;, &quot;panda_joint2&quot;, &quot;panda_joint3&quot;, &quot;panda_joint4&quot;, &quot;panda_joint5&quot;, &quot;panda_joint6&quot;, &quot;panda_joint7&quot;], &quot;current&quot;: {&quot;panda_joint1&quot;: 2.08156132904664, &quot;panda_joint2&quot;: 0.07433945172610405, &quot;panda_joint3&quot;: -2.205115612339555, &quot;panda_joint4&quot;: -2.07917898289265, &quot;panda_joint5&quot;: 0.10365901770672742, &quot;panda_joint6&quot;: 1.956416859825452, &quot;panda_joint7&quot;: 1.4173621415117938}, &quot;target&quot;: [2.199762075796477, -0.04744815646138102, -2.124627521431551, -1.992482412109506, 0.011304804833919187, 1.9497446814364914, 1.658787721235594], &quot;seconds&quot;: 4.0}
 done error_code=0
-largest gap to target: 0.0092 rad (panda_joint7)</pre></details></div></div><div class="phase"><div class="say" data-t="519.9"><span class="t">08:39</span><span>“The tape is above the pink plate. I’ll lower it, release it close to the plate, then withdraw the gripper and verify that it stays in place.”</span></div><div class="step k-gripper" data-t="587.4" data-kind="Gripper" data-label="Opens the gripper"><span class="t">09:47</span><span class="dot"></span><span><span class="tag">Gripper</span>Opens the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py open</pre></div></div><div class="phase"><div class="say" data-t="639.1"><span class="t">10:39</span><span>“The tape is resting flat near the center of the pink plate, and the gripper is clear. Fresh wrist and fixed-camera views confirm the placement. I’m saving the result and continuation notes in the project.”</span></div></div><div class="phase"><div class="say" data-t="685.4"><span class="t">11:25</span><span>“Placed the tape on the pink plate and verified it resting flat after withdrawing the gripper. Saved observations and continuation notes in the project.”</span></div></div></div>
+largest gap to target: 0.0092 rad (panda_joint7)</pre></details></div><div class="step k-ownmove" data-t="475.2" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py"><span class="t">07:55</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.54 0.135 0.28 --execute
+python3 scripts/local_move.py 0.54 0.21 0.28 --execute</pre></div></div><div class="phase"><div class="say" data-t="519.9"><span class="t">08:39</span><span>“The tape is above the pink plate. I’ll lower it, release it close to the plate, then withdraw the gripper and verify that it stays in place.”</span></div><div class="step k-ownmove" data-t="520.6" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 3 steps, checking fresh camera images with its own observe.py"><span class="t">08:40</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 3 steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.54 0.21 0.185 --execute
+python3 scripts/local_move.py 0.54 0.21 0.105 --execute</pre><details><summary>all commands (3)</summary><pre>python3 scripts/local_move.py 0.54 0.21 0.185 --execute
+python3 scripts/local_move.py 0.54 0.21 0.105 --execute
+python3 scripts/local_move.py 0.54 0.21 0.055 --execute</pre></details></div><div class="step k-ownmove" data-t="573.1" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py"><span class="t">09:33</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.539 0.21 0.035 --execute</pre></div><div class="step k-gripper" data-t="587.4" data-kind="Gripper" data-label="Opens the gripper"><span class="t">09:47</span><span class="dot"></span><span><span class="tag">Gripper</span>Opens the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py open</pre></div><div class="step k-ownmove" data-t="597.5" data-kind="Own motion program" data-label="Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py"><span class="t">09:57</span><span class="dot"></span><span><span class="tag">Own motion program</span>Moves the hand with its own program local_move.py in 2 steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 scripts/local_move.py 0.539 0.21 0.12 --execute
+python3 scripts/local_move.py 0.539 0.21 0.22 --execute</pre></div></div><div class="phase"><div class="say" data-t="639.1"><span class="t">10:39</span><span>“The tape is resting flat near the center of the pink plate, and the gripper is clear. Fresh wrist and fixed-camera views confirm the placement. I’m saving the result and continuation notes in the project.”</span></div></div><div class="phase"><div class="say" data-t="685.4"><span class="t">11:25</span><span>“Placed the tape on the pink plate and verified it resting flat after withdrawing the gripper. Saved observations and continuation notes in the project.”</span></div></div></div>
 <div class="player"><video controls playsinline muted preload="metadata" data-speed="10" src="videos/tape-pink-plate-003-r1.mp4"></video>
 <div class="now"><div class="k">Current step</div>Play the video or click a step.</div></div>
 </div>

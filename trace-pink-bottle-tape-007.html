@@ -21,7 +21,10 @@ h1{font-size:clamp(1.3rem,2.6vw,1.8rem);line-height:1.25;margin:10px 0 6px}
 .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);margin:0 0 6px}
 .badge{font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:999px}
 .ok{color:var(--ok);background:var(--ok-bg)}.fail{color:var(--fail);background:var(--fail-bg)}
-.intro{color:var(--muted);max-width:820px;margin:0 0 20px}
+.intro{color:var(--muted);max-width:820px;margin:0 0 12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:.85rem;color:var(--muted);margin:0 0 20px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:-10px}
+.sw.own{background:var(--accent)}.sw.tool{background:#c08a2b}.sw.grip{background:var(--ok)}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}
 .player{position:sticky;top:16px}
 video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px}
@@ -36,7 +39,10 @@ video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:1
 .step:hover{background:var(--code)}.step.active{background:var(--active)}
 .t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem;padding-top:2px}
 .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--muted)}
-.k-script .dot,.k-analysis .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-script .dot,.k-analysis .dot,.k-ownmove .dot,.k-ownrun .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-ros2 .dot{background:var(--accent)}
+.k-script,.k-ownmove{box-shadow:inset 3px 0 0 var(--accent)}
+.k-script .tag,.k-analysis .tag,.k-ownmove .tag,.k-ownrun .tag,.k-ros2 .tag{color:var(--accent)}
 .k-locate .dot{background:#8a5cc2}.k-read .dot{background:var(--line);border:1px solid var(--muted)}
 .tag{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
 details,.peek{grid-column:3}
@@ -56,6 +62,7 @@ pre.out{color:var(--muted)}
 <div class="meta"><strong>Trial 3</strong><span class="badge fail">Failure</span><span>12:02 end-to-end time</span></div>
 <p class="intro">With the bottle upright above the ring, a 5.5 cm downward move produces a large arm rotation (consistent with an IK configuration jump) and is stopped by the operator.</p>
 <p class="intro">Key commands and code the agent wrote and ran in this trial, grouped under the status notes it wrote while working. Click a step to jump the video to that moment; the clock matches the counter in the video.</p>
+<p class="legend"><span class="sw own"></span>Code the agent wrote: its own programs and inline code <span class="sw tool"></span>Starter tools provided in the workspace <span class="sw grip"></span>Gripper</p>
 <div class="layout">
 <div class="trace"><div class="phase"><div class="say" data-t="6.5"><span class="t">00:06</span><span>“I’ll read the project and robot instructions, inspect the current scene, then place the pink bottle in the tape roll and verify its position.”</span></div><div class="step k-read" data-t="7.9" data-kind="Docs" data-label="Reads robot documentation and tools"><span class="t">00:07</span><span class="dot"></span><span><span class="tag">Docs</span>Reads robot documentation and tools</span><pre class="peek">rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;*.md&#x27; -g &#x27;*.py&#x27; -g &#x27;*.yaml&#x27; -g &#x27;*.json&#x27; -g &#x27;!runs/**&#x27; -g &#x27;!.openr…
 cat /robot/README.md</pre><details><summary>all commands (7)</summary><pre>rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;*.md&#x27; -g &#x27;*.py&#x27; -g &#x27;*.yaml&#x27; -g &#x27;*.json&#x27; -g &#x27;!runs/**&#x27; -g &#x27;!.openrua/runs/**&#x27; /workspace /robot
@@ -64,7 +71,51 @@ cat /workspace/AGENTS.md /robot/AGENTS.md /robot/skills.md
 ls -la /workspace
 cat /robot/machine.yaml /robot/docs/10-machine.md /robot/docs/20-perception.md /robot/docs/30-action.md /robot/docs/40-patterns.md /robot/tools/README.md
 rg --files --hidden /workspace/.agents /workspace/.claude
-…</pre></details></div></div><div class="phase"><div class="say" data-t="45.7"><span class="t">00:45</span><span>“The pink bottle is lying on its side, and the tape roll is open on the table to its left. I’m measuring their positions and checking the wrist-camera geometry before approaching, since the camera calibration has a documented offset.”</span></div><div class="step k-analysis" data-t="83.7" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">01:23</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+…</pre></details></div></div><div class="phase"><div class="say" data-t="45.7"><span class="t">00:45</span><span>“The pink bottle is lying on its side, and the tape roll is open on the table to its left. I’m measuring their positions and checking the wrist-camera geometry before approaching, since the camera calibration has a documented offset.”</span></div><div class="step k-script" data-t="65.4" data-kind="Own program" data-label="Writes its own program observe.py (34 lines): “Save timestamped RGB/depth/intrinsics, joints and current TF”"><span class="t">01:05</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program observe.py (34 lines): “Save timestamped RGB/depth/intrinsics, joints and current TF”</span><pre class="peek">#!/usr/bin/env python3
+&quot;&quot;&quot;Save timestamped RGB/depth/intrinsics, joints and current TF. Requires ROS2, cv_bridge, nump…
+import json,time
+from pathlib import Path
+import numpy as np, cv2, yaml,rclpy
+from sensor_msgs.msg import Image,CameraInfo,JointState
+from cv_bridge import CvBridge
+from tf2_ros import Buffer,TransformListener
+from scipy.spatial.transform import Rotation
+rclpy.init(); n=rclpy.create_node(&#x27;task_observe&#x27;); b=Buffer(); listener=TransformListener(b,n)
+m=yaml.safe_load(open(&#x27;/robot/machine.yaml&#x27;)); got={}; subs=[]
+for c in [c for c in m[&#x27;sensors&#x27;] if c[&#x27;kind&#x27;]==&#x27;camera&#x27;]:</pre><details><summary>full program (34 lines)</summary><pre>#!/usr/bin/env python3
+&quot;&quot;&quot;Save timestamped RGB/depth/intrinsics, joints and current TF. Requires ROS2, cv_bridge, numpy, scipy, yaml.&quot;&quot;&quot;
+import json,time
+from pathlib import Path
+import numpy as np, cv2, yaml,rclpy
+from sensor_msgs.msg import Image,CameraInfo,JointState
+from cv_bridge import CvBridge
+from tf2_ros import Buffer,TransformListener
+from scipy.spatial.transform import Rotation
+rclpy.init(); n=rclpy.create_node(&#x27;task_observe&#x27;); b=Buffer(); listener=TransformListener(b,n)
+m=yaml.safe_load(open(&#x27;/robot/machine.yaml&#x27;)); got={}; subs=[]
+for c in [c for c in m[&#x27;sensors&#x27;] if c[&#x27;kind&#x27;]==&#x27;camera&#x27;]:
+ for k,typ in [(&#x27;color&#x27;,Image),(&#x27;depth&#x27;,Image),(&#x27;info&#x27;,CameraInfo)]:
+  key=c[&#x27;name&#x27;]+&#x27;_&#x27;+k
+  subs.append(n.create_subscription(typ,c[k],lambda msg,key=key:got.update({key:msg}),1))
+subs.append(n.create_subscription(JointState,&#x27;/joint_states&#x27;,lambda msg:got.update(joints=msg),1))
+end=time.monotonic()+10
+while time.monotonic()&lt;end:
+ rclpy.spin_once(n,timeout_sec=.1)
+ if len(got)==10 and time.monotonic()&gt;end-7:break
+p=Path(&#x27;/workspace/observations&#x27;)/time.strftime(&#x27;%Y%m%dT%H%M%SZ&#x27;,time.gmtime());p.mkdir(parents=True)
+data={&#x27;acquired_utc&#x27;:p.name,&#x27;transforms&#x27;:{},&#x27;cameras&#x27;:{}}
+for c in [c for c in m[&#x27;sensors&#x27;] if c[&#x27;kind&#x27;]==&#x27;camera&#x27;]:
+ name=c[&#x27;name&#x27;];info=got[name+&#x27;_info&#x27;]; color=got[name+&#x27;_color&#x27;];depth=got[name+&#x27;_depth&#x27;]
+ cv2.imwrite(str(p/(name+&#x27;.png&#x27;)),CvBridge().imgmsg_to_cv2(color,&#x27;bgr8&#x27;))
+ np.save(p/(name+&#x27;_depth.npy&#x27;),CvBridge().imgmsg_to_cv2(depth,&#x27;passthrough&#x27;))
+ data[&#x27;cameras&#x27;][name]={&#x27;K&#x27;:list(info.k),&#x27;frame&#x27;:info.header.frame_id,&#x27;depth_encoding&#x27;:depth.encoding,&#x27;stamp&#x27;:{&#x27;sec&#x27;:color.header.stamp.sec,&#x27;nanosec&#x27;:color.header.stamp.nanosec}}
+for frame in [&#x27;panda_link8&#x27;,&#x27;robotiq_pinch&#x27;,&#x27;zed_wrist_left_camera_optical_frame&#x27;]:
+ try:
+  t=b.lookup_transform(&#x27;panda_link0&#x27;,frame,rclpy.time.Time()).transform
+  q=[t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w];xyz=[t.translation.x,t.translation.y,t.translation.z];T=np.eye(4);T[:3,:3]=Rotation.from_quat(q).as_matrix();T[:3,3]=xyz
+  data[&#x27;transforms&#x27;][frame]={&#x27;xyz&#x27;:xyz,&#x27;quaternion&#x27;:q,&#x27;matrix&#x27;:T.tolist()}
+ except Exception as e:data[&#x27;transforms&#x27;][frame]={&#x27;error&#x27;:str(e)}
+j=got[&#x27;joints&#x27;];data[&#x27;joints&#x27;]=dict(zip(j.name,j.position));(p/&#x27;state.json&#x27;).write_text(json.dumps(data,indent=2));print(p);print(json.dumps(data[&#x27;transforms&#x27;],indent=2));rclpy.shutdown()</pre></details></div><div class="step k-analysis" data-t="83.7" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and fit the table plane"><span class="t">01:23</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and fit the table plane</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T135507Z/&#x27;
 s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);K=np.array(s[&#x27;cameras&#x27;][&#x27;z…
 for u,v in [(700,90),(840,115),(630,100),(25,175),(150,80),(550,250),(200,360),(850,250)]:
@@ -88,18 +139,27 @@ K [[699.87408447   0.         474.76864624]
 630 100 0.45359948 cam [ 0.1006079  -0.10649528  0.45359948] world [0.35722753 0.03173302 0.01245113]
 25 175 nan cam [nan nan nan] world [nan nan nan]
 150 80 0.4412323 cam [-0.20474885 -0.11620063  0.44123229] world [ 0.36797386 -0.27350542 -0.00182835]
-…</pre></details></div><div class="step k-read" data-t="96.5" data-kind="Docs" data-label="Reads the gripper geometry from the robot description"><span class="t">01:36</span><span class="dot"></span><span><span class="tag">Docs</span>Reads the gripper geometry from the robot description</span><pre class="peek">ros2 topic type /franka_robot_state_broadcaster/robot_state; ros2 topic echo /franka_robot_stat…
-import rclpy</pre><details><summary>all commands (11)</summary><pre>ros2 topic type /franka_robot_state_broadcaster/robot_state; ros2 topic echo /franka_robot_state_broadcaster/robot_state --once; ros2 service list | rg &#x27;fk|ik|cartesian&#x27;; python3 - &lt;&lt;&#x27;PY&#x27;
-import rclpy
+…</pre></details></div><div class="step k-analysis" data-t="96.5" data-kind="Own code" data-label="Runs its own ROS 2 code to read the robot model"><span class="t">01:36</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own ROS 2 code to read the robot model</span><pre class="peek">import rclpy
+from std_msgs.msg import String
+from rclpy.qos import QoSProfile,DurabilityPolicy
+rclpy.init();n=rclpy.create_node(&#x27;read_urdf&#x27;);a=[];n.create_subscription(String,&#x27;/robot_descrip…
+while not a:rclpy.spin_once(n,timeout_sec=.5)</pre><details><summary>full code (6 lines) and output</summary><pre>import rclpy
 from std_msgs.msg import String
 from rclpy.qos import QoSProfile,DurabilityPolicy
 rclpy.init();n=rclpy.create_node(&#x27;read_urdf&#x27;);a=[];n.create_subscription(String,&#x27;/robot_description&#x27;,a.append,QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL))
 while not a:rclpy.spin_once(n,timeout_sec=.5)
-open(&#x27;/workspace/observations/robot_description.urdf&#x27;,&#x27;w&#x27;).write(a[0].data)
-PY
-rg -n &#x27;robotiq|zed|finger|knuckle&#x27; /workspace/observations/robot_description.urdf | head -70
-sed -n &#x27;568,636p&#x27; /workspace/observations/robot_description.urdf
-sed -n &#x27;668,700p&#x27; /workspace/observations/robot_description.urdf</pre></details></div><div class="step k-move" data-t="124.0" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">02:03</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.35 0.13 0.23 0.70710678 0.70710678 0 0 6 --at tcp</pre></div><div class="step k-analysis" data-t="159.5" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">02:39</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+open(&#x27;/workspace/observations/robot_description.urdf&#x27;,&#x27;w&#x27;).write(a[0].data)</pre><pre class="out">franka_msgs/msg/FrankaState
+header:
+  stamp:
+    sec: 1793368535
+    nanosec: 873682746
+  frame_id: &#x27;&#x27;
+cartesian_collision:
+- 0.0
+- 0.0
+- 0.0
+…</pre></details></div><div class="step k-read" data-t="103.3" data-kind="Docs" data-label="Reads the gripper geometry from the robot description"><span class="t">01:43</span><span class="dot"></span><span><span class="tag">Docs</span>Reads the gripper geometry from the robot description</span><pre class="peek">sed -n &#x27;568,636p&#x27; /workspace/observations/robot_description.urdf
+sed -n &#x27;668,700p&#x27; /workspace/observations/robot_description.urdf</pre></div><div class="step k-move" data-t="124.0" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py"><span class="t">02:03</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.35 0.13 0.23 0.70710678 0.70710678 0 0 6 --at tcp</pre></div><div class="step k-analysis" data-t="159.5" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">02:39</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T135620Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;ze…
 for u,v in [(480,130),(480,210),(475,290),(470,350),(300,220),(600,220)]:
  z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(K)@[u,v,1]*z;print((u,v),z,T[:3,:3]@pc+T[:…
@@ -113,7 +173,7 @@ pt=Ti@np.r_[s[&#x27;transforms&#x27;][&#x27;robotiq_pinch&#x27;][&#x27;xyz&#x27;
 (470, 350) 0.37159497 [0.37636636 0.2139203  0.02886844]
 (300, 220) 0.3511821 [0.46045257 0.14198079 0.02553675]
 (600, 220) 0.3727272 [0.30583883 0.14970853 0.0071836 ]
-pinch projection [601.59751446 381.89149463   1.        ]</pre></details></div></div><div class="phase"><div class="say" data-t="181.5"><span class="t">03:01</span><span>“I’ve aligned the gripper across the bottle’s body. I’ll lower it in stages, check that the fingers straddle the bottle, and confirm the grasp before lifting and turning it upright.”</span></div><div class="step k-move" data-t="182.4" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">03:02</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.115 0.70710678 0.70710678 0 0 5 --at tcp</pre></div><div class="step k-analysis" data-t="214.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:34</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+pinch projection [601.59751446 381.89149463   1.        ]</pre></details></div></div><div class="phase"><div class="say" data-t="181.5"><span class="t">03:01</span><span>“I’ve aligned the gripper across the bottle’s body. I’ll lower it in stages, check that the fingers straddle the bottle, and confirm the grasp before lifting and turning it upright.”</span></div><div class="step k-move" data-t="182.4" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py"><span class="t">03:02</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.115 0.70710678 0.70710678 0 0 5 --at tcp</pre></div><div class="step k-analysis" data-t="214.9" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">03:34</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T135715Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;ze…
 for u,v in [(565,300),(560,350),(580,200),(400,200),(720,200),(700,350)]:
  z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(K)@[u,v,1]*z;print((u,v),z,T[:3,:3]@pc+T[:…</pre><details><summary>full code (4 lines) and output</summary><pre>import json,numpy as np
@@ -124,8 +184,8 @@ for u,v in [(565,300),(560,350),(580,200),(400,200),(720,200),(700,350)]:
 (580, 200) 0.20602168 [0.36876162 0.107768   0.05185233]
 (400, 200) 0.2575755 [0.4264811  0.11973796 0.00059821]
 (720, 200) 0.25789925 [0.3086069  0.1199007  0.00209986]
-(700, 350) 0.25657284 [0.31673246 0.17168254 0.02087381]</pre></details></div><div class="step k-move" data-t="233.9" data-kind="Motion" data-label="Moves the hand in 2 small steps, checking fresh camera images"><span class="t">03:53</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 2 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.065 0.70710678 0.70710678 0 0 4 --at tcp
-python3 /robot/tools/action/ik_move.py 0.375 0.135 0.032 0.70710678 0.70710678 0 0 4 --at tcp</pre></div><div class="step k-gripper" data-t="287.1" data-kind="Gripper" data-label="Closes the gripper"><span class="t">04:47</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div></div><div class="phase"><div class="say" data-t="314.5"><span class="t">05:14</span><span>“The gripper stopped partway closed around the bottle, which is consistent with a grasp. I’m lifting it slightly to check that it moves securely with the fingers.”</span></div><div class="step k-move" data-t="315.6" data-kind="Motion" data-label="Moves the hand"><span class="t">05:15</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.16 0.70710678 0.70710678 0 0 5 --at tcp</pre></div><div class="step k-move" data-t="335.2" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">05:35</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.29 0.34 1 0 0 0 7 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="383.2"><span class="t">06:23</span><span>“The bottle lifted securely. I’m bringing it above the tape roll, then I’ll turn it upright and refine the alignment before lowering it into the opening.”</span></div><div class="step k-analysis" data-t="402.2" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">06:42</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+(700, 350) 0.25657284 [0.31673246 0.17168254 0.02087381]</pre></details></div><div class="step k-move" data-t="233.9" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 2 small steps, checking fresh camera images with its own observe.py"><span class="t">03:53</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 2 small steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.065 0.70710678 0.70710678 0 0 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.375 0.135 0.032 0.70710678 0.70710678 0 0 4 --at tcp</pre></div><div class="step k-gripper" data-t="287.1" data-kind="Gripper" data-label="Closes the gripper"><span class="t">04:47</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div></div><div class="phase"><div class="say" data-t="314.5"><span class="t">05:14</span><span>“The gripper stopped partway closed around the bottle, which is consistent with a grasp. I’m lifting it slightly to check that it moves securely with the fingers.”</span></div><div class="step k-move" data-t="315.6" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">05:15</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.375 0.135 0.16 0.70710678 0.70710678 0 0 5 --at tcp</pre></div><div class="step k-move" data-t="335.2" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images"><span class="t">05:35</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.29 0.34 1 0 0 0 7 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="383.2"><span class="t">06:23</span><span>“The bottle lifted securely. I’m bringing it above the tape roll, then I’ll turn it upright and refine the alignment before lowering it into the opening.”</span></div><div class="step k-analysis" data-t="402.2" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">06:42</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T140025Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;ze…
 for u,v in [(410,160),(410,170),(410,100),(340,160),(470,160),(410,230),(290,170),(300,300)]:
  z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(K)@[u,v,1]*z;print((u,v),z,T[:3,:3]@pc+T[:…</pre><details><summary>full code (4 lines) and output</summary><pre>import json,numpy as np
@@ -141,7 +201,7 @@ pinch [0.4298370557941242, -0.28915176647294044, 0.33714308590901837]
 (470, 160) nan [nan nan nan]
 (410, 230) 0.14874351 [ 0.39532832 -0.33119     0.33352268]
 (290, 170) 0.3148142 [ 0.41478192 -0.39878275  0.16418449]
-…</pre></details></div><div class="step k-analysis" data-t="412.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">06:52</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+…</pre></details></div><div class="step k-analysis" data-t="412.1" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames"><span class="t">06:52</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T140025Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));K=np.array(s[&#x27;c…
 for h in [-.03,0,.02]:
  print(h,T[:3,3]+ray*((h-T[2,3])/ray[2]))</pre><details><summary>full code (4 lines) and output</summary><pre>import json,numpy as np
@@ -149,7 +209,7 @@ p=&#x27;/workspace/observations/20261030T140025Z/&#x27;;s=json.load(open(p+&#x27
 for h in [-.03,0,.02]:
  print(h,T[:3,3]+ray*((h-T[2,3])/ray[2]))</pre><pre class="out">-0.03 [ 0.44869881 -0.36160999 -0.03      ]
 0 [ 0.44314646 -0.3590798   0.        ]
-0.02 [ 0.4394449  -0.35739302  0.02      ]</pre></details></div><div class="step k-move" data-t="457.6" data-kind="Motion" data-label="Moves the hand"><span class="t">07:37</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.45 -0.35 0.31 0.92387953 0 0.38268343 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="483.6"><span class="t">08:03</span><span>“The bottle is secure and partway through the turn. The wrist depth image is unreliable with the bottle so close to the camera, so I’m using the two fixed views to check the final alignment.”</span></div><div class="step k-move" data-t="484.5" data-kind="Motion" data-label="Moves the hand"><span class="t">08:04</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.45 -0.35 0.30 0.70710678 0 0.70710678 0 5 --at tcp</pre></div><div class="step k-analysis" data-t="515.8" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">08:35</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+0.02 [ 0.4394449  -0.35739302  0.02      ]</pre></details></div><div class="step k-move" data-t="457.6" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">07:37</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.45 -0.35 0.31 0.92387953 0 0.38268343 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="483.6"><span class="t">08:03</span><span>“The bottle is secure and partway through the turn. The wrist depth image is unreliable with the bottle so close to the camera, so I’m using the two fixed views to check the final alignment.”</span></div><div class="step k-move" data-t="484.5" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">08:04</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.45 -0.35 0.30 0.70710678 0 0.70710678 0 5 --at tcp</pre></div><div class="step k-analysis" data-t="515.8" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth"><span class="t">08:35</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth</span><pre class="peek">import json,numpy as np
 p=&#x27;/workspace/observations/20261030T140219Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;))
 for cam,pixels in [(&#x27;d405&#x27;,[(130,195),(153,240),(167,320),(200,380),(480,360)]),(&#x27;d405_side&#x27;,[(…
  d=np.load(p+cam+&#x27;_depth.npy&#x27;);K=np.array(s[&#x27;cameras&#x27;][cam][&#x27;K&#x27;]).reshape(3,3);print(cam,K)
@@ -168,7 +228,45 @@ for cam,pixels in [(&#x27;d405&#x27;,[(130,195),(153,240),(167,320),(200,380),(4
 480 360 1.02 [0.14435025 0.2783452  1.02      ]
 d405_side [[436.42123413   0.         423.62783813]
  [  0.         435.99841309 241.18182373]
-…</pre></details></div><div class="step k-move" data-t="592.7" data-kind="Motion" data-label="Moves the hand"><span class="t">09:52</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.445 -0.37 0.20 0.70710678 0 0.70710678 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="614.4"><span class="t">10:14</span><span>“The bottle is upright above the opening. I’m lowering it gradually and checking its base against the tape’s inner rim from both fixed cameras.”</span></div><div class="step k-analysis" data-t="635.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">10:35</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">exec(open(&#x27;/workspace/scripts/geometry.py&#x27;).read().split(&#x27;for uv in [(105&#x27;)[0].replace(&quot;p=sys.a…
+…</pre></details></div><div class="step k-script" data-t="557.7" data-kind="Own program" data-label="Writes its own program geometry.py (27 lines): “Offline plane analysis for observed D405 scene”, then runs its own program geometry.py to compute 3-D positions from depth and fit the table plane"><span class="t">09:17</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program geometry.py (27 lines): “Offline plane analysis for observed D405 scene”, then runs its own program geometry.py to compute 3-D positions from depth and fit the table plane</span><pre class="peek">&quot;&quot;&quot;Offline plane analysis for observed D405 scene; camera points only, no robot control.&quot;&quot;&quot;
+import json,sys,numpy as np,cv2
+p=sys.argv[1].rstrip(&#x27;/&#x27;)+&#x27;/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));K=np.array(s[&#x27;cameras&#x27;][&#x27;d405&#x27;]…
+poly=np.array([[260,205],[550,230],[610,420],[60,390]],np.int32);mask=np.zeros(d.shape,np.uint8…
+v,u=np.mgrid[:480:3,:848:3];z=d[v,u];sel=(mask[v,u]&gt;0)&amp;(z&gt;.2)&amp;(z&lt;2)
+pts=(np.stack([u[sel],v[sel],np.ones(sel.sum())],axis=1)@np.linalg.inv(K).T)*z[sel,None]
+rng=np.random.default_rng(0);best=[]
+for _ in range(300):
+ pp=pts[rng.choice(len(pts),3,False)];n=np.cross(pp[1]-pp[0],pp[2]-pp[0]);n/=np.linalg.norm(n);…
+ if len(ii)&gt;len(best):best=ii
+pp=pts[best];center=pp.mean(0);_,_,vh=np.linalg.svd(pp-center,full_matrices=False);n=vh[-1];n*=…
+print(&#x27;plane normal&#x27;,n,&#x27;h&#x27;,h,&#x27;inliers&#x27;,len(best),&#x27;rms&#x27;,np.std(pp@n))</pre><details><summary>full program (28 lines)</summary><pre>&quot;&quot;&quot;Offline plane analysis for observed D405 scene; camera points only, no robot control.&quot;&quot;&quot;
+import json,sys,numpy as np,cv2
+p=sys.argv[1].rstrip(&#x27;/&#x27;)+&#x27;/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));K=np.array(s[&#x27;cameras&#x27;][&#x27;d405&#x27;][&#x27;K&#x27;]).reshape(3,3);d=np.load(p+&#x27;d405_depth.npy&#x27;)*.001
+poly=np.array([[260,205],[550,230],[610,420],[60,390]],np.int32);mask=np.zeros(d.shape,np.uint8);cv2.fillPoly(mask,[poly],1)
+v,u=np.mgrid[:480:3,:848:3];z=d[v,u];sel=(mask[v,u]&gt;0)&amp;(z&gt;.2)&amp;(z&lt;2)
+pts=(np.stack([u[sel],v[sel],np.ones(sel.sum())],axis=1)@np.linalg.inv(K).T)*z[sel,None]
+rng=np.random.default_rng(0);best=[]
+for _ in range(300):
+ pp=pts[rng.choice(len(pts),3,False)];n=np.cross(pp[1]-pp[0],pp[2]-pp[0]);n/=np.linalg.norm(n);dist=abs((pts-pp[0])@n);ii=np.where(dist&lt;.005)[0]
+ if len(ii)&gt;len(best):best=ii
+pp=pts[best];center=pp.mean(0);_,_,vh=np.linalg.svd(pp-center,full_matrices=False);n=vh[-1];n*=(-1 if n[2]&gt;0 else 1);h=n@center
+print(&#x27;plane normal&#x27;,n,&#x27;h&#x27;,h,&#x27;inliers&#x27;,len(best),&#x27;rms&#x27;,np.std(pp@n))
+def point(u,v):
+ patch=d[v-2:v+3,u-2:u+3];z=np.median(patch[patch&gt;0]);return np.linalg.inv(K)@[u,v,1]*z
+def floor(u,v):
+ ray=np.linalg.inv(K)@[u,v,1];return ray*h/(ray@n)
+tape=floor(167,320);print(&#x27;tape&#x27;,tape)
+for uv in [(105,136),(106,139),(130,195),(153,240)]:
+ pt=point(*uv);height=pt@n-h;proj=pt-height*n;im=K@proj;im/=im[2];print(&#x27;bottle&#x27;,uv,&#x27;p&#x27;,pt,&#x27;height&#x27;,height,&#x27;flooruv&#x27;,im[:2],&#x27;delta_cam&#x27;,proj-tape)
+# world +Y from initial bottle&#x27;s long axis in same camera
+old=&#x27;/workspace/observations/20261030T135507Z/&#x27;;od=np.load(old+&#x27;d405_depth.npy&#x27;)*.001
+def oldpt(u,v):
+ z=np.median(od[v-2:v+3,u-2:u+3]);return np.linalg.inv(K)@[u,v,1]*z
+ya=oldpt(449,307)-oldpt(369,300);ya-=n*(ya@n);ya/=np.linalg.norm(ya);xa=np.cross(ya,n);R=np.array([xa,ya,n]);print(&#x27;R_cam_to_world&#x27;,R)
+for uv in [(105,136),(106,139)]:
+ pt=point(*uv);height=pt@n-h;proj=pt-height*n;print(&#x27;base error world&#x27;,uv,R@(proj-tape),&#x27;height&#x27;,height)
+np.save(p+&#x27;d405_rotation_estimate.npy&#x27;,R)
+python3 /workspace/scripts/geometry.py /workspace/observations/20261030T140219Z</pre></details></div><div class="step k-move" data-t="592.7" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">09:52</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.445 -0.37 0.20 0.70710678 0 0.70710678 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="614.4"><span class="t">10:14</span><span>“The bottle is upright above the opening. I’m lowering it gradually and checking its base against the tape’s inner rim from both fixed cameras.”</span></div><div class="step k-analysis" data-t="635.1" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth"><span class="t">10:35</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth</span><pre class="peek">exec(open(&#x27;/workspace/scripts/geometry.py&#x27;).read().split(&#x27;for uv in [(105&#x27;)[0].replace(&quot;p=sys.a…
 R=np.load(&#x27;/workspace/observations/20261030T140219Z/d405_rotation_estimate.npy&#x27;)
 for uv in [(117,191),(120,194),(160,286),(156,280),(161,289)]:
  pt=point(*uv);height=pt@n-h;proj=pt-height*n;print(uv,&#x27;height&#x27;,height,&#x27;error&#x27;,R@(proj-tape),&#x27;d…</pre><details><summary>full code (4 lines) and output</summary><pre>exec(open(&#x27;/workspace/scripts/geometry.py&#x27;).read().split(&#x27;for uv in [(105&#x27;)[0].replace(&quot;p=sys.argv[1].rstrip(&#x27;/&#x27;)+&#x27;/&#x27;&quot;,&quot;p=&#x27;/workspace/observations/20261030T140406Z/&#x27;&quot;))
@@ -180,9 +278,9 @@ tape [-0.50928942  0.15630145  0.86910876]
 (120, 194) height 0.2814919276887541 error [ 2.45310324e-03 -1.24483039e-02 -9.58740642e-05] depth [-0.49917743 -0.08131711  0.718     ]
 (160, 286) height 0.10201939676304728 error [0.01777272 0.01877933 0.00020604] depth [-0.48241077  0.08070207  0.801     ]
 (156, 280) height 0.1056794827757015 error [5.43846292e-03 6.10439908e-03 6.60079695e-05] depth [-0.49475033  0.0702169   0.809     ]
-(161, 289) height 0.0994408376838739 error [0.02310461 0.02266053 0.00025337] depth [-0.47874918  0.08596864  0.798     ]</pre></details></div><div class="step k-move" data-t="671.4" data-kind="Motion" data-label="Moves the hand"><span class="t">11:11</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.445 -0.37 0.145 0.70710678 0 0.70710678 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="702.5"><span class="t">11:42</span><span>“The robot entered emergency-stop mode during the last lowering command. I’ve stopped issuing motion commands and am checking the bottle’s position.
+(161, 289) height 0.0994408376838739 error [0.02310461 0.02266053 0.00025337] depth [-0.47874918  0.08596864  0.798     ]</pre></details></div><div class="step k-move" data-t="671.4" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">11:11</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.445 -0.37 0.145 0.70710678 0 0.70710678 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="702.5"><span class="t">11:42</span><span>“The robot entered emergency-stop mode during the last lowering command. I’ve stopped issuing motion commands and am checking the bottle’s position.
 
-The machine instructions in [/robot/machine.yaml](/robot/machine.yaml) require the operator to release an emergency stop before recovery.”</span></div><div class="step k-analysis" data-t="709.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">11:49</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json
+The machine instructions in [/robot/machine.yaml](/robot/machine.yaml) require the operator to release an emergency stop before recovery.”</span></div><div class="step k-analysis" data-t="709.9" data-kind="Own code" data-label="Runs its own code to transform between camera and robot frames"><span class="t">11:49</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to transform between camera and robot frames</span><pre class="peek">import json
 for t in [&#x27;20261030T140406Z&#x27;,&#x27;20261030T140528Z&#x27;]:
  s=json.load(open(&#x27;/workspace/observations/&#x27;+t+&#x27;/state.json&#x27;));print(t,&#x27;pinch&#x27;,s[&#x27;transforms&#x27;][…</pre><details><summary>full code (3 lines) and output</summary><pre>import json
 for t in [&#x27;20261030T140406Z&#x27;,&#x27;20261030T140528Z&#x27;]:

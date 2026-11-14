@@ -21,7 +21,10 @@ h1{font-size:clamp(1.3rem,2.6vw,1.8rem);line-height:1.25;margin:10px 0 6px}
 .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);margin:0 0 6px}
 .badge{font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:999px}
 .ok{color:var(--ok);background:var(--ok-bg)}.fail{color:var(--fail);background:var(--fail-bg)}
-.intro{color:var(--muted);max-width:820px;margin:0 0 20px}
+.intro{color:var(--muted);max-width:820px;margin:0 0 12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:.85rem;color:var(--muted);margin:0 0 20px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:-10px}
+.sw.own{background:var(--accent)}.sw.tool{background:#c08a2b}.sw.grip{background:var(--ok)}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}
 .player{position:sticky;top:16px}
 video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px}
@@ -36,7 +39,10 @@ video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:1
 .step:hover{background:var(--code)}.step.active{background:var(--active)}
 .t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem;padding-top:2px}
 .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--muted)}
-.k-script .dot,.k-analysis .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-script .dot,.k-analysis .dot,.k-ownmove .dot,.k-ownrun .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-ros2 .dot{background:var(--accent)}
+.k-script,.k-ownmove{box-shadow:inset 3px 0 0 var(--accent)}
+.k-script .tag,.k-analysis .tag,.k-ownmove .tag,.k-ownrun .tag,.k-ros2 .tag{color:var(--accent)}
 .k-locate .dot{background:#8a5cc2}.k-read .dot{background:var(--line);border:1px solid var(--muted)}
 .tag{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
 details,.peek{grid-column:3}
@@ -56,6 +62,7 @@ pre.out{color:var(--muted)}
 <div class="meta"><strong>Trial 3</strong><span class="badge ok">Success</span><span>12:59 end-to-end time</span></div>
 
 <p class="intro">Key commands and code the agent wrote and ran in this trial, grouped under the status notes it wrote while working. Click a step to jump the video to that moment; the clock matches the counter in the video.</p>
+<p class="legend"><span class="sw own"></span>Code the agent wrote: its own programs and inline code <span class="sw tool"></span>Starter tools provided in the workspace <span class="sw grip"></span>Gripper</p>
 <div class="layout">
 <div class="trace"><div class="phase"><div class="say" data-t="6.0"><span class="t">00:06</span><span>“I’ll read the project and robot instructions, inspect the current scene, then move the orange cup into the blue cup and verify it.”</span></div><div class="step k-read" data-t="7.5" data-kind="Docs" data-label="Reads robot documentation and tools"><span class="t">00:07</span><span class="dot"></span><span><span class="tag">Docs</span>Reads robot documentation and tools</span><pre class="peek">rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;!\.openrua/runs/**&#x27; -g &#x27;!observations/**&#x27; -g &#x27;!\.git/**&#x27; /workspa…
 cat /robot/README.md</pre><details><summary>all commands (7)</summary><pre>rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;!\.openrua/runs/**&#x27; -g &#x27;!observations/**&#x27; -g &#x27;!\.git/**&#x27; /workspace /robot
@@ -64,7 +71,57 @@ ls -la /workspace
 cat /workspace/AGENTS.md
 cat /robot/AGENTS.md
 cat /robot/skills.md
-…</pre></details></div></div><div class="phase"><div class="say" data-t="44.9"><span class="t">00:44</span><span>“Both cups are upright, with the orange cup beside the plate and the blue cup farther left. I’m checking their positions and the gripper’s alignment; the camera calibration is approximate, so I’ll verify the approach from multiple views.”</span></div><div class="step k-analysis" data-t="84.7" data-kind="Analysis" data-label="Runs its own analysis code, then moves the hand"><span class="t">01:24</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code, then moves the hand</span><pre class="peek">import json,numpy as np
+…</pre></details></div></div><div class="phase"><div class="say" data-t="44.9"><span class="t">00:44</span><span>“Both cups are upright, with the orange cup beside the plate and the blue cup farther left. I’m checking their positions and the gripper’s alignment; the camera calibration is approximate, so I’ll verify the approach from multiple views.”</span></div><div class="step k-script" data-t="67.9" data-kind="Own program" data-label="Writes its own program observe.py (40 lines): “Save fresh RGB/depth, intrinsics, joints and TF”"><span class="t">01:07</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program observe.py (40 lines): “Save fresh RGB/depth, intrinsics, joints and TF”</span><pre class="peek">#!/usr/bin/env python3
+&quot;&quot;&quot;Save fresh RGB/depth, intrinsics, joints and TF. Usage: observe.py LABEL.
+Dependencies: system ROS2 rclpy, cv_bridge, tf2_ros, numpy, scipy, PyYAML, OpenCV.
+No motion. Snapshots are sequential, with individual sensor timestamps.
+&quot;&quot;&quot;
+import json, sys, time
+from pathlib import Path
+from datetime import datetime, timezone
+import cv2, numpy as np, yaml, rclpy
+from cv_bridge import CvBridge
+from sensor_msgs.msg import Image, CameraInfo, JointState
+from tf2_ros import Buffer, TransformListener</pre><details><summary>full program (40 lines)</summary><pre>#!/usr/bin/env python3
+&quot;&quot;&quot;Save fresh RGB/depth, intrinsics, joints and TF. Usage: observe.py LABEL.
+Dependencies: system ROS2 rclpy, cv_bridge, tf2_ros, numpy, scipy, PyYAML, OpenCV.
+No motion. Snapshots are sequential, with individual sensor timestamps.
+&quot;&quot;&quot;
+import json, sys, time
+from pathlib import Path
+from datetime import datetime, timezone
+import cv2, numpy as np, yaml, rclpy
+from cv_bridge import CvBridge
+from sensor_msgs.msg import Image, CameraInfo, JointState
+from tf2_ros import Buffer, TransformListener
+from scipy.spatial.transform import Rotation
+rclpy.init(); node=rclpy.create_node(&#x27;project_observe&#x27;); buf=Buffer(); listener=TransformListener(buf,node)
+def grab(topic,typ):
+    got=[]; sub=node.create_subscription(typ,topic,got.append,1); end=time.monotonic()+10
+    while not got and time.monotonic()&lt;end: rclpy.spin_once(node,timeout_sec=.1)
+    node.destroy_subscription(sub)
+    if not got: raise RuntimeError(topic)
+    return got[-1]
+def tf(frame):
+    end=time.monotonic()+3
+    while time.monotonic()&lt;end:
+        rclpy.spin_once(node,timeout_sec=.05)
+        if buf.can_transform(&#x27;panda_link0&#x27;,frame,rclpy.time.Time()):
+            t=buf.lookup_transform(&#x27;panda_link0&#x27;,frame,rclpy.time.Time()).transform
+            q=[t.rotation.x,t.rotation.y,t.rotation.z,t.rotation.w]; p=[t.translation.x,t.translation.y,t.translation.z]
+            return {&#x27;xyz&#x27;:p,&#x27;xyzw&#x27;:q}
+    return None
+out=Path(&#x27;/workspace/observations&#x27;)/(datetime.now(timezone.utc).strftime(&#x27;%Y%m%dT%H%M%SZ&#x27;)+&#x27;_&#x27;+sys.argv[1]); out.mkdir(parents=True)
+m=yaml.safe_load(open(&#x27;/robot/machine.yaml&#x27;)); data={&#x27;acquired_utc&#x27;:datetime.now(timezone.utc).isoformat(),&#x27;cameras&#x27;:{}}
+for c in m[&#x27;sensors&#x27;]:
+    if c[&#x27;kind&#x27;]!=&#x27;camera&#x27;:continue
+    rgb=grab(c[&#x27;color&#x27;],Image); dep=grab(c[&#x27;depth&#x27;],Image); info=grab(c[&#x27;info&#x27;],CameraInfo)
+    cv2.imwrite(str(out/(c[&#x27;name&#x27;]+&#x27;.png&#x27;)),CvBridge().imgmsg_to_cv2(rgb,&#x27;bgr8&#x27;))
+    d=CvBridge().imgmsg_to_cv2(dep,&#x27;passthrough&#x27;).astype(float)*(0.001 if dep.encoding==&#x27;16UC1&#x27; else 1)
+    np.save(out/(c[&#x27;name&#x27;]+&#x27;_depth_m.npy&#x27;),d)
+    data[&#x27;cameras&#x27;][c[&#x27;name&#x27;]]={&#x27;K&#x27;:list(info.k),&#x27;frame&#x27;:info.header.frame_id,&#x27;tf&#x27;:tf(info.header.frame_id),&#x27;color_stamp&#x27;:[rgb.header.stamp.sec,rgb.header.stamp.nanosec]}
+js=grab(&#x27;/joint_states&#x27;,JointState);data[&#x27;joints&#x27;]=dict(zip(js.name,js.position));data[&#x27;hand&#x27;]=tf(&#x27;panda_link8&#x27;);data[&#x27;tcp&#x27;]=tf(&#x27;robotiq_pinch&#x27;)
+(out/&#x27;state.json&#x27;).write_text(json.dumps(data,indent=2));print(out);print(json.dumps({&#x27;hand&#x27;:data[&#x27;hand&#x27;],&#x27;tcp&#x27;:data[&#x27;tcp&#x27;],&#x27;joints&#x27;:data[&#x27;joints&#x27;]}));node.destroy_node();rclpy.shutdown()</pre></details></div><div class="step k-analysis" data-t="84.7" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth and transform between camera and robot frames, then moves the hand with starter tool ik_move.py"><span class="t">01:24</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth and transform between camera and robot frames, then moves the hand with starter tool ik_move.py</span><pre class="peek">import json,numpy as np
 from scipy.spatial.transform import Rotation
 p=&#x27;observations/20261112T142845Z_baseline/&#x27;
 s=json.load(open(p+&#x27;state.json&#x27;));c=s[&#x27;cameras&#x27;][&#x27;zed_wrist&#x27;];print(c)
@@ -85,7 +142,7 @@ python3 /robot/tools/action/ik_move.py .406 .027 .33 1 0 0 0 4 --at tcp</pre><pr
 (350, 300) 0.4379180371761322 [ 0.53076299 -0.08693557  0.03840564]
 (650, 270) 0.44399765133857727 [0.5338819  0.10268335 0.02677969]
 (480, 340) 0.4455743432044983 [ 0.56397852 -0.00832797  0.04554901]
-…</pre></details></div><div class="step k-analysis" data-t="126.9" data-kind="Analysis" data-label="Runs its own analysis code, then moves the hand"><span class="t">02:06</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code, then moves the hand</span><pre class="peek">import numpy as np,json
+…</pre></details></div><div class="step k-analysis" data-t="126.9" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth, then moves the hand with starter tool ik_move.py"><span class="t">02:06</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth, then moves the hand with starter tool ik_move.py</span><pre class="peek">import numpy as np,json
 p=&#x27;observations/20261112T142911Z_upright/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;))
 for c,pts in {&#x27;d405&#x27;:[(353,199),(428,199),(390,197),(408,319),(240,365),(390,420),(170,290),(62…
  d=np.load(p+c+&#x27;_depth_m.npy&#x27;);K=np.array(s[&#x27;cameras&#x27;][c][&#x27;K&#x27;]).reshape(3,3);print(c)
@@ -105,22 +162,61 @@ d405
 240 365 0.773 [-0.32181189  0.2199326   0.773     ]
 390 420 0.72 [-0.04872125  0.29696906  0.72      ]
 170 290 0.933 [-0.54022332  0.10268251  0.933     ]
-…</pre></details></div></div><div class="phase"><div class="say" data-t="146.3"><span class="t">02:26</span><span>“The gripper is clear of the table. I’m measuring how a small arm movement appears in the fixed cameras so I can align it with the orange cup despite the uncertain calibration.”</span></div><div class="step k-analysis" data-t="172.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">02:52</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+…</pre></details></div></div><div class="phase"><div class="say" data-t="146.3"><span class="t">02:26</span><span>“The gripper is clear of the table. I’m measuring how a small arm movement appears in the fixed cameras so I can align it with the orange cup despite the uncertain calibration.”</span></div><div class="step k-analysis" data-t="172.9" data-kind="Own code" data-label="Runs its own code to make cropped or annotated views"><span class="t">02:52</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to make cropped or annotated views</span><pre class="peek">import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
 a=cv2.imread(p+&#x27;d405.png&#x27;);cv2.imwrite(p+&#x27;gripper_crop.png&#x27;,cv2.resize(a[165:230,330:450],(720,…</pre><details><summary>full code (3 lines)</summary><pre>import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
-a=cv2.imread(p+&#x27;d405.png&#x27;);cv2.imwrite(p+&#x27;gripper_crop.png&#x27;,cv2.resize(a[165:230,330:450],(720,390)))</pre></details></div><div class="step k-analysis" data-t="211.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:31</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+a=cv2.imread(p+&#x27;d405.png&#x27;);cv2.imwrite(p+&#x27;gripper_crop.png&#x27;,cv2.resize(a[165:230,330:450],(720,390)))</pre></details></div><div class="step k-script" data-t="194.0" data-kind="Own program" data-label="Writes its own program estimate_scene.py (17 lines): “Task-specific approximate front camera registration from table normal and visible pads”, then runs its own program estimate_scene.py to segment objects in the image and compute 3-D positions from depth"><span class="t">03:13</span><span class="dot"></span><span><span class="tag">Own program</span>Writes its own program estimate_scene.py (17 lines): “Task-specific approximate front camera registration from table normal and visible pads”, then runs its own program estimate_scene.py to segment objects in the image and compute 3-D positions from depth</span><pre class="peek">&quot;&quot;&quot;Task-specific approximate front camera registration from table normal and visible pads.
+Read only. Re-observe and adjust pad pixels on any new scene; not a calibrated extrinsic.
+&quot;&quot;&quot;
+import json,numpy as np,cv2
+from pathlib import Path
+p=Path(&#x27;observations/20261112T142959Z_forward_probe&#x27;);s=json.load(open(p/&#x27;state.json&#x27;));c=s[&#x27;ca…
+hsv=cv2.cvtColor(im,cv2.COLOR_BGR2HSV);mask=(v&gt;245)&amp;(v&lt;460)&amp;(u&gt;130)&amp;(u&lt;660)&amp;(hsv[:,:,1]&lt;45)&amp;(hs…
+for i in range(200):
+ a,b,c=P[rng.choice(len(P),3,replace=False)];n=np.cross(b-a,c-a);n/=np.linalg.norm(n);inl=np.ab…
+ if np.sum(inl)&gt;len(best):best=P[inl]
+_,_,vh=np.linalg.svd(best-best.mean(0),full_matrices=False);z=vh[-1];z*= -np.sign(z[1]);y=np.ar…
+def pt(u,v):</pre><details><summary>full program (18 lines)</summary><pre>&quot;&quot;&quot;Task-specific approximate front camera registration from table normal and visible pads.
+Read only. Re-observe and adjust pad pixels on any new scene; not a calibrated extrinsic.
+&quot;&quot;&quot;
+import json,numpy as np,cv2
+from pathlib import Path
+p=Path(&#x27;observations/20261112T142959Z_forward_probe&#x27;);s=json.load(open(p/&#x27;state.json&#x27;));c=s[&#x27;cameras&#x27;][&#x27;d405&#x27;];K=np.array(c[&#x27;K&#x27;]).reshape(3,3);d=np.load(p/&#x27;d405_depth_m.npy&#x27;);im=cv2.imread(str(p/&#x27;d405.png&#x27;));v,u=np.indices(d.shape);xyz=np.stack([(u-K[0,2])/K[0,0]*d,(v-K[1,2])/K[1,1]*d,d],-1)
+hsv=cv2.cvtColor(im,cv2.COLOR_BGR2HSV);mask=(v&gt;245)&amp;(v&lt;460)&amp;(u&gt;130)&amp;(u&lt;660)&amp;(hsv[:,:,1]&lt;45)&amp;(hsv[:,:,2]&gt;130)&amp;(d&gt;.5)&amp;(d&lt;1.2);P=xyz[mask][::10];rng=np.random.default_rng(42);best=[]
+for i in range(200):
+ a,b,c=P[rng.choice(len(P),3,replace=False)];n=np.cross(b-a,c-a);n/=np.linalg.norm(n);inl=np.abs((P-a)@n)&lt;.003
+ if np.sum(inl)&gt;len(best):best=P[inl]
+_,_,vh=np.linalg.svd(best-best.mean(0),full_matrices=False);z=vh[-1];z*= -np.sign(z[1]);y=np.array([-1.,0,0]);y-=z*(y@z);y/=np.linalg.norm(y);x=np.cross(y,z);R=np.stack([x,y,z]);
+def pt(u,v):
+ depth=np.median(d[v-2:v+3,u-2:u+3]);return np.linalg.inv(K)@np.array([u,v,1])*depth
+pads=[pt(356,218),pt(431,215)];origin=np.mean(pads,0);t=np.array(s[&#x27;tcp&#x27;][&#x27;xyz&#x27;])-R@origin
+print(&#x27;R&#x27;,R,&#x27;t&#x27;,t,&#x27;table_z&#x27;,np.median(best@R[2]+t[2]));print(&#x27;pads&#x27;,pads)
+for name,u,v in [(&#x27;orange_near_rim&#x27;,409,332),(&#x27;orange_far_rim&#x27;,408,305),(&#x27;orange_center&#x27;,408,319),(&#x27;blue_near_rim&#x27;,244,386),(&#x27;blue_far_rim&#x27;,241,344),(&#x27;blue_center&#x27;,240,365)]: print(name,R@pt(u,v)+t)
+(p/&#x27;front_registration.json&#x27;).write_text(json.dumps({&#x27;R&#x27;:R.tolist(),&#x27;t&#x27;:t.tolist(),&#x27;table_z&#x27;:float(np.median(best@R[2]+t[2]))},indent=2))
+python3 scripts/estimate_scene.py</pre></details></div><div class="step k-analysis" data-t="211.9" data-kind="Own code" data-label="Runs its own code to make cropped or annotated views"><span class="t">03:31</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to make cropped or annotated views</span><pre class="peek">import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
 a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_COU…</pre><details><summary>full code (3 lines)</summary><pre>import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
-a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_COUNTERCLOCKWISE))</pre></details></div><div class="step k-analysis" data-t="217.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:37</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_COUNTERCLOCKWISE))</pre></details></div><div class="step k-analysis" data-t="217.1" data-kind="Own code" data-label="Runs its own code to make cropped or annotated views"><span class="t">03:37</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to make cropped or annotated views</span><pre class="peek">import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
 a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_CLO…</pre><details><summary>full code (3 lines)</summary><pre>import cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;
-a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_CLOCKWISE))</pre></details></div><div class="step k-move" data-t="252.8" data-kind="Motion" data-label="Moves the hand"><span class="t">04:12</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .22 1 0 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="258.2"><span class="t">04:18</span><span>“I’ve located the orange cup relative to the arm. I’ll grip one side of its rim, lift it clear of the surrounding objects, and carry it over the blue cup.”</span></div><div class="step k-gripper" data-t="259.5" data-kind="Gripper" data-label="Sets the gripper to 0.4"><span class="t">04:19</span><span class="dot"></span><span><span class="tag">Gripper</span>Sets the gripper to 0.4</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py 0.4</pre></div><div class="step k-move" data-t="280.7" data-kind="Motion" data-label="Moves the hand in 3 small steps, checking fresh camera images"><span class="t">04:40</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 3 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .12 1 0 0 0 5 --at tcp
+a=cv2.imread(p+&#x27;d405_side.png&#x27;);cv2.imwrite(p+&#x27;side_upright.png&#x27;,cv2.rotate(a,cv2.ROTATE_90_CLOCKWISE))</pre></details></div><div class="step k-ownrun" data-t="246.5" data-kind="Own program" data-label="Runs its own program estimate_scene.py to segment objects in the image and compute 3-D positions from depth, then moves the hand with starter tool ik_move.py"><span class="t">04:06</span><span class="dot"></span><span><span class="tag">Own program</span>Runs its own program estimate_scene.py to segment objects in the image and compute 3-D positions from depth, then moves the hand with starter tool ik_move.py</span><pre class="peek">python3 scripts/estimate_scene.py
+python3 /robot/tools/action/ik_move.py .396 .045 .28 1 0 0 0 4 --at tcp</pre><details><summary>all commands and output</summary><pre>python3 scripts/estimate_scene.py
+python3 /robot/tools/action/ik_move.py .396 .045 .28 1 0 0 0 4 --at tcp</pre><pre class="out">R [[-8.67361738e-19  5.15448455e-01 -8.56920586e-01]
+ [ 9.99896891e-01  1.23053299e-02  7.40180992e-03]
+ [ 1.43599420e-02 -8.56832229e-01 -5.15395307e-01]] t [0.97341496 0.05884425 0.59854349] table_z -0.019213999970292828
+pads [array([-0.0865501 , -0.03388205,  0.59      ]), array([ 0.01607977, -0.03748411,  0.582     ])]
+orange_near_rim [0.34580423 0.04750649 0.01787974]
+orange_far_rim [0.28037954 0.04409887 0.03153633]
+orange_center [0.33046149 0.04520105 0.03753544]
+blue_near_rim [ 0.5102963  -0.20849501  0.0530925 ]
+blue_far_rim [ 0.38432318 -0.26447677  0.0192051 ]
+blue_center [ 0.41727661 -0.25856021 -0.0005752 ]</pre></details></div><div class="step k-move" data-t="252.8" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py"><span class="t">04:12</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .22 1 0 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="258.2"><span class="t">04:18</span><span>“I’ve located the orange cup relative to the arm. I’ll grip one side of its rim, lift it clear of the surrounding objects, and carry it over the blue cup.”</span></div><div class="step k-gripper" data-t="259.5" data-kind="Gripper" data-label="Sets the gripper to 0.4"><span class="t">04:19</span><span class="dot"></span><span><span class="tag">Gripper</span>Sets the gripper to 0.4</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py 0.4</pre></div><div class="step k-move" data-t="280.7" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py"><span class="t">04:40</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .12 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .325 .085 .075 1 0 0 0 4 --at tcp</pre><details><summary>all commands (3)</summary><pre>python3 /robot/tools/action/ik_move.py .325 .085 .12 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .325 .085 .075 1 0 0 0 4 --at tcp
-python3 /robot/tools/action/ik_move.py .325 .085 .05 1 0 0 0 4 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="358.7"><span class="t">05:58</span><span>“The fingers are aligned on either side of the orange cup’s rim. I’m making the final short descent, then I’ll check that the cup lifts securely before moving sideways.”</span></div><div class="step k-gripper" data-t="369.5" data-kind="Gripper" data-label="Closes the gripper"><span class="t">06:09</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div><div class="step k-move" data-t="378.2" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">06:18</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .12 1 0 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="433.9"><span class="t">07:13</span><span>“The orange cup lifted successfully and is held securely by its rim. I’m raising it for clearance and checking the center of the blue cup before lowering it.”</span></div><div class="step k-analysis" data-t="440.2" data-kind="Analysis" data-label="Moves the hand, then runs its own analysis code"><span class="t">07:20</span><span class="dot"></span><span><span class="tag">Analysis</span>Moves the hand, then runs its own analysis code</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .22 1 0 0 0 5 --at tcp
+python3 /robot/tools/action/ik_move.py .325 .085 .05 1 0 0 0 4 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="358.7"><span class="t">05:58</span><span>“The fingers are aligned on either side of the orange cup’s rim. I’m making the final short descent, then I’ll check that the cup lifts securely before moving sideways.”</span></div><div class="step k-gripper" data-t="369.5" data-kind="Gripper" data-label="Closes the gripper"><span class="t">06:09</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div><div class="step k-move" data-t="378.2" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py"><span class="t">06:18</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .12 1 0 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="433.9"><span class="t">07:13</span><span>“The orange cup lifted successfully and is held securely by its rim. I’m raising it for clearance and checking the center of the blue cup before lowering it.”</span></div><div class="step k-analysis" data-t="440.2" data-kind="Own code" data-label="Moves the hand with starter tool ik_move.py, then runs its own code to segment objects in the image and compute 3-D positions from depth"><span class="t">07:20</span><span class="dot"></span><span><span class="tag">Own code</span>Moves the hand with starter tool ik_move.py, then runs its own code to segment objects in the image and compute 3-D positions from depth</span><pre class="peek">python3 /robot/tools/action/ik_move.py .325 .085 .22 1 0 0 0 5 --at tcp
 import numpy as np,json,cv2
 p=&#x27;observations/20261112T142959Z_forward_probe/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));c=s[&#x27;cameras…
 for name,region in [(&#x27;blue&#x27;,(u&gt;210)&amp;(u&lt;275)&amp;(v&gt;342)&amp;(v&lt;390)),(&#x27;orange&#x27;,(u&gt;385)&amp;(u&lt;430)&amp;(v&gt;302)&amp;…
@@ -140,7 +236,7 @@ for name,region in [(&#x27;blue&#x27;,(u&gt;210)&amp;(u&lt;275)&amp;(v&gt;342)&a
 0.08 [ 0.48787438 -0.21420775  0.08      ]
 orange [[0.28037954 0.00837068 0.01631029]
  [0.32844714 0.0443652  0.03369482]
-…</pre></details></div><div class="step k-analysis" data-t="459.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">07:39</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np,cv2
+…</pre></details></div><div class="step k-analysis" data-t="459.1" data-kind="Own code" data-label="Runs its own code to segment objects in the image and compute 3-D positions from depth"><span class="t">07:39</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to segment objects in the image and compute 3-D positions from depth</span><pre class="peek">import json,numpy as np,cv2
 p=&#x27;observations/20261112T143414Z_lift_check/&#x27;;a=json.load(open(&#x27;observations/20261112T142959Z_f…
 for z in [.11,.12,.13]:
  ray=np.linalg.inv(K)@[400,277,1];print(z,R@(ray*((z-t[2])/(R@ray)[2]))+t)</pre><details><summary>full code (4 lines) and output</summary><pre>import json,numpy as np,cv2
@@ -156,10 +252,10 @@ orange [[3.13555942e-01 9.40261565e-05 6.13488465e-02]
  [3.45855323e-01 6.36862117e-02 1.41329310e-01]
  [3.47228343e-01 6.82868628e-02 1.44686935e-01]]
 tcp {&#x27;xyz&#x27;: [0.3233167141141523, 0.08365280735849859, 0.11790061200506521], &#x27;xyzw&#x27;: [0.7108701135430143, 0.7033195858637277, -0.0022894593796384567, 1.369546845501732e-05]}
-…</pre></details></div><div class="step k-move" data-t="467.5" data-kind="Motion" data-label="Moves the hand in 3 small steps, checking fresh camera images"><span class="t">07:47</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 3 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .39 .00 .24 1 0 0 0 5 --at tcp
+…</pre></details></div><div class="step k-move" data-t="467.5" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py"><span class="t">07:47</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py .39 .00 .24 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .44 -.08 .24 1 0 0 0 5 --at tcp</pre><details><summary>all commands (3)</summary><pre>python3 /robot/tools/action/ik_move.py .39 .00 .24 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .44 -.08 .24 1 0 0 0 5 --at tcp
-python3 /robot/tools/action/ik_move.py .46 -.17 .24 1 0 0 0 5 --at tcp</pre></details></div><div class="step k-analysis" data-t="545.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">09:05</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np,cv2
+python3 /robot/tools/action/ik_move.py .46 -.17 .24 1 0 0 0 5 --at tcp</pre></details></div><div class="step k-analysis" data-t="545.9" data-kind="Own code" data-label="Runs its own code to segment objects in the image and compute 3-D positions from depth"><span class="t">09:05</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to segment objects in the image and compute 3-D positions from depth</span><pre class="peek">import json,numpy as np,cv2
 p=&#x27;observations/20261112T143558Z_above_blue/&#x27;;a=json.load(open(&#x27;observations/20261112T142959Z_f…
 for name,mask in [(&#x27;orange&#x27;,(u&gt;190)&amp;(u&lt;265)&amp;(v&gt;255)&amp;(v&lt;329)&amp;(hsv[:,:,0]&lt;30)),(&#x27;blue&#x27;,(u&gt;205)&amp;(u…
  mask=mask&amp;(hsv[:,:,1]&gt;140)&amp;(d&gt;.3)&amp;(d&lt;1);pts=w[mask];print(name,np.percentile(pts,[5,50,90,95],…
@@ -178,7 +274,7 @@ for name,mask in [(&#x27;orange&#x27;,(u&gt;190)&amp;(u&lt;265)&amp;(v&gt;255)&a
 blue [[ 0.38420274 -0.27619174 -0.03045127]
  [ 0.46947015 -0.2366078   0.02062336]
  [ 0.49232862 -0.18945009  0.05271487]
-…</pre></details></div><div class="step k-analysis" data-t="555.6" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">09:15</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+…</pre></details></div><div class="step k-analysis" data-t="555.6" data-kind="Own code" data-label="Runs its own code to compute 3-D positions from depth"><span class="t">09:15</span><span class="dot"></span><span><span class="tag">Own code</span>Runs its own code to compute 3-D positions from depth</span><pre class="peek">import json,numpy as np
 p=&#x27;observations/20261112T143558Z_above_blue/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));K=np.array(s[&#x27;c…
 for u,v in [(235,320),(240,315),(223,314),(232,319),(230,265),(211,274),(244,280)]:
  dep=np.median(d[v-1:v+2,u-1:u+2]);print(u,v,R@(np.linalg.inv(K)@[u,v,1]*dep)+t)</pre><details><summary>full code (4 lines) and output</summary><pre>import json,numpy as np
@@ -190,10 +286,10 @@ for u,v in [(235,320),(240,315),(223,314),(232,319),(230,265),(211,274),(244,280
 232 319 [ 0.49502696 -0.20695512  0.17745531]
 230 265 [ 0.4877669  -0.19356736  0.26732883]
 211 274 [ 0.49162158 -0.22067486  0.25470977]
-244 280 [ 0.50397353 -0.17149247  0.25428175]</pre></details></div></div><div class="phase"><div class="say" data-t="573.5"><span class="t">09:33</span><span>“The orange cup is above the blue cup. I’m correcting a small offset and lowering it in short steps so its base enters the opening cleanly.”</span></div><div class="step k-move" data-t="574.0" data-kind="Motion" data-label="Moves the hand in 3 small steps, checking fresh camera images"><span class="t">09:34</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 3 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .435 -.195 .18 1 0 0 0 5 --at tcp
+244 280 [ 0.50397353 -0.17149247  0.25428175]</pre></details></div></div><div class="phase"><div class="say" data-t="573.5"><span class="t">09:33</span><span>“The orange cup is above the blue cup. I’m correcting a small offset and lowering it in short steps so its base enters the opening cleanly.”</span></div><div class="step k-move" data-t="574.0" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py"><span class="t">09:34</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py in 3 small steps, checking fresh camera images with its own observe.py</span><pre class="peek">python3 /robot/tools/action/ik_move.py .435 -.195 .18 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .435 -.195 .13 1 0 0 0 4 --at tcp</pre><details><summary>all commands (3)</summary><pre>python3 /robot/tools/action/ik_move.py .435 -.195 .18 1 0 0 0 5 --at tcp
 python3 /robot/tools/action/ik_move.py .435 -.195 .13 1 0 0 0 4 --at tcp
-python3 /robot/tools/action/ik_move.py .435 -.195 .105 1 0 0 0 4 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="668.3"><span class="t">11:08</span><span>“The orange cup’s base is inside the blue cup. I’m releasing it and withdrawing the gripper, then checking that it stays nested.”</span></div><div class="step k-gripper" data-t="669.1" data-kind="Gripper" data-label="Sets the gripper to 0.4"><span class="t">11:09</span><span class="dot"></span><span><span class="tag">Gripper</span>Sets the gripper to 0.4</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py 0.4</pre></div><div class="step k-move" data-t="674.6" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">11:14</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .435 -.195 .22 1 0 0 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="740.1"><span class="t">12:20</span><span>“The orange cup is resting inside the blue cup, confirmed from all three cameras after the gripper withdrew. I’m saving the final observations and handoff notes.”</span></div></div><div class="phase"><div class="say" data-t="779.3"><span class="t">12:59</span><span>“Done—the orange cup is inside the blue cup, verified from all three cameras after withdrawing the gripper. Observations and [handoff notes](/workspace/notes/2026-11-12-cups.md) are saved.”</span></div></div></div>
+python3 /robot/tools/action/ik_move.py .435 -.195 .105 1 0 0 0 4 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="668.3"><span class="t">11:08</span><span>“The orange cup’s base is inside the blue cup. I’m releasing it and withdrawing the gripper, then checking that it stays nested.”</span></div><div class="step k-gripper" data-t="669.1" data-kind="Gripper" data-label="Sets the gripper to 0.4"><span class="t">11:09</span><span class="dot"></span><span><span class="tag">Gripper</span>Sets the gripper to 0.4</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py 0.4</pre></div><div class="step k-move" data-t="674.6" data-kind="Starter tool" data-label="Moves the hand with starter tool ik_move.py, checking fresh camera images"><span class="t">11:14</span><span class="dot"></span><span><span class="tag">Starter tool</span>Moves the hand with starter tool ik_move.py, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py .435 -.195 .22 1 0 0 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="740.1"><span class="t">12:20</span><span>“The orange cup is resting inside the blue cup, confirmed from all three cameras after the gripper withdrew. I’m saving the final observations and handoff notes.”</span></div></div><div class="phase"><div class="say" data-t="779.3"><span class="t">12:59</span><span>“Done—the orange cup is inside the blue cup, verified from all three cameras after withdrawing the gripper. Observations and [handoff notes](/workspace/notes/2026-11-12-cups.md) are saved.”</span></div></div></div>
 <div class="player"><video controls playsinline muted preload="metadata" data-speed="10" src="videos/orange-cup-blue-cup-004.mp4"></video>
 <div class="now"><div class="k">Current step</div>Play the video or click a step.</div></div>
 </div>
