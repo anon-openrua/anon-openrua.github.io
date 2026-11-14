@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Stand a pink bottle upright, trial 1</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--muted:#6b6a64;--line:#e4e1d8;--card:#ffffff;--code:#f3f1ec;
+--ok:#2f7a4b;--ok-bg:#e6f2ea;--fail:#a4442f;--fail-bg:#f6e7e2;--accent:#3b5bdb;--active:#eef1fd}
+@media (prefers-color-scheme:dark){:root{--bg:#161614;--fg:#ecebe6;--muted:#a3a19a;--line:#2e2d29;--card:#1f1e1b;
+--code:#262521;--ok:#7cc79a;--ok-bg:#1d3326;--fail:#e59a86;--fail-bg:#3a231d;--accent:#8ea6ff;--active:#232842}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+main{max-width:1320px;margin:0 auto;padding:28px 16px 48px}
+a{color:var(--accent)}
+.back{font-size:.9rem;text-decoration:none}
+h1{font-size:clamp(1.3rem,2.6vw,1.8rem);line-height:1.25;margin:10px 0 6px}
+.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);margin:0 0 6px}
+.badge{font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:999px}
+.ok{color:var(--ok);background:var(--ok-bg)}.fail{color:var(--fail);background:var(--fail-bg)}
+.intro{color:var(--muted);max-width:820px;margin:0 0 20px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}
+.player{position:sticky;top:16px}
+video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px}
+.now{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:.9rem;min-height:3.2em}
+.now .k{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.trace{max-height:calc(100vh - 40px);overflow-y:auto;padding-right:6px}
+.phase{margin:0 0 6px;padding:10px 0 4px;border-top:1px solid var(--line)}
+.phase:first-child{border-top:0;padding-top:0}
+.say{display:flex;gap:10px;cursor:pointer;color:var(--fg);font-style:italic;margin:0 0 8px}
+.say:hover{color:var(--accent)}
+.step{display:grid;grid-template-columns:48px 14px minmax(0,1fr);gap:0 8px;padding:6px 8px;border-radius:8px;cursor:pointer}
+.step:hover{background:var(--code)}.step.active{background:var(--active)}
+.t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem;padding-top:2px}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--muted)}
+.k-script .dot,.k-analysis .dot{background:var(--accent)}.k-move .dot{background:#c08a2b}.k-gripper .dot{background:var(--ok)}
+.k-locate .dot{background:#8a5cc2}.k-read .dot{background:var(--line);border:1px solid var(--muted)}
+.tag{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+details,.peek{grid-column:3}
+details{margin-top:2px}
+pre.peek{margin:4px 0 0;padding:6px 8px;font-size:11.5px;color:var(--fg);overflow:hidden;white-space:pre;text-overflow:ellipsis}
+summary{font-size:.82rem;color:var(--muted);cursor:pointer}
+pre{margin:6px 0 0;padding:10px;background:var(--code);border-radius:8px;overflow-x:auto;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+pre.out{color:var(--muted)}
+@media (max-width:900px){.layout{grid-template-columns:1fr}.player{position:sticky;top:0;z-index:2;background:var(--bg);padding:8px 0}
+.trace{max-height:none;overflow:visible}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="index.html#task-10">← All trials</a>
+<h1>Stand a pink bottle upright</h1>
+<div class="meta"><strong>Trial 1</strong><span class="badge ok">Success</span><span>18:48 end-to-end time</span></div>
+
+<p class="intro">Key commands and code the agent wrote and ran in this trial, grouped under the status notes it wrote while working. Click a step to jump the video to that moment; the clock matches the counter in the video.</p>
+<div class="layout">
+<div class="trace"><div class="phase"><div class="say" data-t="5.2"><span class="t">00:05</span><span>“I’ll read the robot instructions and project notes, inspect the current scene, then stand the pink bottle upright and verify it is stable.”</span></div><div class="step k-read" data-t="6.8" data-kind="Docs" data-label="Reads robot documentation and tools"><span class="t">00:06</span><span class="dot"></span><span><span class="tag">Docs</span>Reads robot documentation and tools</span><pre class="peek">rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;!node_modules&#x27; -g &#x27;!observations/**&#x27; -g &#x27;!.openrua/runs/**&#x27; /work…
+cat /robot/README.md</pre><details><summary>all commands (7)</summary><pre>rg --files -g &#x27;AGENTS.md&#x27; -g &#x27;!node_modules&#x27; -g &#x27;!observations/**&#x27; -g &#x27;!.openrua/runs/**&#x27; /workspace /robot
+cat /robot/README.md
+cat /workspace/AGENTS.md /robot/AGENTS.md /robot/skills.md
+ls -la /workspace
+rg --files /workspace -g &#x27;!.openrua/runs/**&#x27; -g &#x27;!observations/**&#x27; -g &#x27;!node_modules&#x27;
+cat /robot/machine.yaml /robot/docs/10-machine.md /robot/docs/20-perception.md /robot/docs/30-action.md /robot/docs/40-patterns.md /robot/tools/README.md
+…</pre></details></div></div><div class="phase"><div class="say" data-t="39.2"><span class="t">00:39</span><span>“The pink bottle is lying on its side between the cups and the robot. The fixed cameras lack robot-frame calibration, so I’m checking the wrist camera and arm pose before approaching it.”</span></div><div class="step k-move" data-t="65.5" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">01:05</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.486 -0.188 0.215 1 0 0 0 4 --at tcp</pre></div><div class="step k-analysis" data-t="88.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">01:28</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154531Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
+for u,v in [(800,80),(700,80),(800,140),(600,200),(450,70),(600,100)]:
+ z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(k)@np.array([u,v,1])*z;print(u,v,z,rot@pc+…</pre><details><summary>full code (6 lines) and output</summary><pre>import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154531Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);k=np.array(s[&#x27;zed_wrist_info&#x27;][&#x27;k&#x27;]).reshape(3,3);tf=s[&#x27;zed_wrist_left_camera_optical_frame&#x27;];rot=R.from_quat(tf[&#x27;q&#x27;]).as_matrix()
+for u,v in [(800,80),(700,80),(800,140),(600,200),(450,70),(600,100)]:
+ z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(k)@np.array([u,v,1])*z;print(u,v,z,rot@pc+tf[&#x27;p&#x27;])
+print(&#x27;rot&#x27;,rot)</pre><pre class="out">800 80 0.36589423 [ 0.43706143 -0.04343756 -0.02381772]
+700 80 0.3630014 [ 0.43590351 -0.09675709 -0.0211968 ]
+800 140 0.3737482 [ 0.46809256 -0.04035542 -0.02171274]
+600 200 0.37515572 [ 0.49692427 -0.14770776 -0.0136331 ]
+450 70 0.34754288 [ 0.42780969 -0.22609348 -0.00770635]
+600 100 0.35826737 [ 0.44435651 -0.14978741 -0.01341775]
+rot [[ 1.80746041e-02  9.48134925e-01  3.17353860e-01]
+ [ 9.99813257e-01 -1.93103553e-02  7.48670449e-04]
+ [ 6.83805640e-03  3.17281065e-01 -9.48306895e-01]]</pre></details></div><div class="step k-move" data-t="96.5" data-kind="Motion" data-label="Moves the hand"><span class="t">01:36</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.415 -0.105 0.235 1 0 0 0 5 --at tcp</pre></div><div class="step k-read" data-t="108.1" data-kind="Docs" data-label="Reads the gripper geometry from the robot description"><span class="t">01:48</span><span class="dot"></span><span><span class="tag">Docs</span>Reads the gripper geometry from the robot description</span><pre class="peek">ros2 topic echo /robot_description --once --qos-durability transient_local &gt; observations/robot…
+rg -o &#x27;.{0,120}(robotiq_85_base_joint|robotiq_pinch|left_knuckle_joint|left_inner_knuckle_joint…</pre><details><summary>all commands</summary><pre>ros2 topic echo /robot_description --once --qos-durability transient_local &gt; observations/robot_description.txt
+rg -o &#x27;.{0,120}(robotiq_85_base_joint|robotiq_pinch|left_knuckle_joint|left_inner_knuckle_joint).{0,450}&#x27; observations/robot_description.txt</pre></details></div></div><div class="phase"><div class="say" data-t="124.6"><span class="t">02:04</span><span>“I’ve raised the gripper and moved closer for a clearer view. I’m measuring the bottle’s position and orientation so the gripper can grasp its body without touching the nearby cups.”</span></div><div class="step k-analysis" data-t="139.4" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">02:19</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154609Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
+for u,v in [(650,140),(500,140),(860,160),(650,80),(650,220),(300,180),(600,270),(600,40)]:
+ z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(k)@np.array([u,v,1])*z;print(u,v,z,rot@pc+…</pre><details><summary>full code (5 lines) and output</summary><pre>import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154609Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);k=np.array(s[&#x27;zed_wrist_info&#x27;][&#x27;k&#x27;]).reshape(3,3);tf=s[&#x27;zed_wrist_left_camera_optical_frame&#x27;];rot=R.from_quat(tf[&#x27;q&#x27;]).as_matrix()
+for u,v in [(650,140),(500,140),(860,160),(650,80),(650,220),(300,180),(600,270),(600,40)]:
+ z=np.nanmedian(d[v-4:v+5,u-4:u+5]);pc=np.linalg.inv(k)@np.array([u,v,1])*z;print(u,v,z,rot@pc+tf[&#x27;p&#x27;])</pre><pre class="out">650 140 0.31759575 [ 0.38779601 -0.05306779  0.05486346]
+500 140 0.3282492 [ 0.38818587 -0.12086113  0.04392433]
+860 160 0.31936863 [0.39843097 0.04321054 0.05632126]
+650 80 0.33177012 [ 0.36295348 -0.04899208  0.03158242]
+650 220 0.36155084 [ 0.43379167 -0.04274342  0.02389092]
+300 180 0.3649053 [ 0.41163421 -0.22433756  0.01337405]
+600 270 0.36824057 [ 0.4600671  -0.06789705  0.02569967]
+600 40 0.36188835 [ 0.3450167  -0.06689502 -0.00614623]
+
+24930 observations/urdf.txt
+…</pre></details></div><div class="step k-analysis" data-t="189.4" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:09</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154609Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
+for u,v in [(395,340),(835,340),(420,350),(830,360),(630,345)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(u,v,z,rot@(np.linalg.inv(k)@np.array([u,v,1])*z)+tf[&#x27;…</pre><details><summary>full code (5 lines) and output</summary><pre>import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154609Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);k=np.array(s[&#x27;zed_wrist_info&#x27;][&#x27;k&#x27;]).reshape(3,3);tf=s[&#x27;zed_wrist_left_camera_optical_frame&#x27;];rot=R.from_quat(tf[&#x27;q&#x27;]).as_matrix()
+for u,v in [(395,340),(835,340),(420,350),(830,360),(630,345)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(u,v,z,rot@(np.linalg.inv(k)@np.array([u,v,1])*z)+tf[&#x27;p&#x27;])</pre><pre class="out">395 340 0.3830806 [ 0.499352   -0.17836204  0.02347961]
+835 340 0.14953779 [ 0.40331253 -0.05653224  0.23730832]
+420 350 0.3706197 [ 0.49940307 -0.16371927  0.03660251]
+830 360 0.15004474 [ 0.40758403 -0.05742342  0.23820683]
+630 345 0.37273684 [ 0.49976691 -0.05181063  0.03421817]</pre></details></div><div class="step k-analysis" data-t="214.0" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">03:33</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+im=cv2.imread(&#x27;observations/20261113T154609Z/d405_color.png&#x27;);cv2.imwrite(&#x27;observations/gripper…
+import numpy as np
+z=np.load(&#x27;observations/20261113T154609Z/d405_depth.npy&#x27;)*.001
+for u,v in [(318,242),(319,247),(382,240),(382,246),(390,343),(340,343),(440,346)]:print(u,v,np…</pre><details><summary>full code (5 lines) and output</summary><pre>import cv2
+im=cv2.imread(&#x27;observations/20261113T154609Z/d405_color.png&#x27;);cv2.imwrite(&#x27;observations/gripper_crop.png&#x27;,cv2.resize(im[200:270,290:405],None,fx=4,fy=4))
+import numpy as np
+z=np.load(&#x27;observations/20261113T154609Z/d405_depth.npy&#x27;)*.001
+for u,v in [(318,242),(319,247),(382,240),(382,246),(390,343),(340,343),(440,346)]:print(u,v,np.median(z[v-2:v+3,u-2:u+3]))</pre><pre class="out">318 242 0.674
+319 247 0.676
+382 240 0.67
+382 246 0.682
+390 343 0.803
+340 343 0.806
+440 346 0.806</pre></details></div><div class="step k-move" data-t="256.1" data-kind="Motion" data-label="Moves the hand"><span class="t">04:16</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.984808 0.173648 0 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="261.0"><span class="t">04:21</span><span>“The bottle’s body is within reach. I’m turning the open gripper across its width, then I’ll lower it in stages and check alignment before closing.”</span></div><div class="step k-move" data-t="262.7" data-kind="Motion" data-label="Moves the hand in 4 small steps, checking fresh camera images"><span class="t">04:22</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 4 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.939693 0.342020 0 0 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.8660254 0.5 0 0 4 --at tcp</pre><details><summary>all commands (4)</summary><pre>python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.939693 0.342020 0 0 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.8660254 0.5 0 0 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.22 0.7660444 0.6427876 0 0 4 --at tcp
+python3 /robot/tools/action/ik_move.py 0.385 -0.045 0.16 0.7071068 0.7071068 0 0 4 --at tcp</pre></details></div><div class="step k-analysis" data-t="316.2" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">05:16</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154912Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
+for u,v in [(490,220),(490,320),(490,100),(625,340),(830,350),(410,350)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(u,v,z,rot@(np.linalg.inv(k)@np.array([u,v,1])*z)+tf[&#x27;…</pre><details><summary>full code (5 lines) and output</summary><pre>import json,numpy as np
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T154912Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);k=np.array(s[&#x27;zed_wrist_info&#x27;][&#x27;k&#x27;]).reshape(3,3);tf=s[&#x27;zed_wrist_left_camera_optical_frame&#x27;];rot=R.from_quat(tf[&#x27;q&#x27;]).as_matrix()
+for u,v in [(490,220),(490,320),(490,100),(625,340),(830,350),(410,350)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(u,v,z,rot@(np.linalg.inv(k)@np.array([u,v,1])*z)+tf[&#x27;p&#x27;])</pre><pre class="out">490 220 0.26665878 [ 0.40322853 -0.05047739  0.03976175]
+490 320 0.26915544 [ 0.40432136 -0.01339248  0.04987186]
+490 100 0.23571114 [ 0.40286973 -0.09697975  0.05649639]
+625 340 0.32642868 [0.34019759 0.02013279 0.00111772]
+830 350 0.3032495 [0.25637915 0.01660701 0.02478547]
+410 350 0.15033144 [ 0.42452431 -0.05542676  0.16098262]</pre></details></div><div class="step k-move" data-t="324.4" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">05:24</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.405 -0.05 0.09 0.7071068 0.7071068 0 0 5 --at tcp</pre></div><div class="step k-move" data-t="343.2" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">05:43</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.413 -0.05 0.05 0.7071068 0.7071068 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="359.2"><span class="t">05:59</span><span>“The gripper is now aligned over the bottle’s body. I’m making the final short descent; once the grasp is confirmed, I’ll lift it clear of the table and rotate it upright.”</span></div><div class="step k-gripper" data-t="378.1" data-kind="Gripper" data-label="Closes the gripper"><span class="t">06:18</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div><div class="step k-move" data-t="393.8" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">06:33</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.413 -0.05 0.11 0.7071068 0.7071068 0 0 5 --at tcp</pre></div><div class="step k-move" data-t="409.5" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">06:49</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.413 -0.05 0.075 0.7071068 0.7071068 0 0 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="415.4"><span class="t">06:55</span><span>“The gripper has closed around the bottle. The motion guard rejected the first lift because one joint’s requested change was too large, so I’ve rechecked the scene and requested a smaller vertical lift.”</span></div><div class="step k-move" data-t="427.5" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">07:07</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.413 -0.05 0.125 0.7071068 0.7071068 0 0 5 --at tcp</pre></div><div class="step k-gripper" data-t="441.0" data-kind="Gripper" data-label="Opens the gripper"><span class="t">07:21</span><span class="dot"></span><span><span class="tag">Gripper</span>Opens the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py open</pre></div></div><div class="phase"><div class="say" data-t="458.0"><span class="t">07:37</span><span>“The bottle slipped out during the lift and is still on the table. I’ve reopened the gripper and am adjusting to a lower grasp around the middle of the bottle.”</span></div><div class="step k-analysis" data-t="461.0" data-kind="Analysis" data-label="Runs its own analysis code, then moves the hand"><span class="t">07:41</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code, then moves the hand</span><pre class="peek">import numpy as np,json
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T155131Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_dep…
+for u,v in [(510,200),(510,300)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(R.from_quat(t[&#x27;q&#x27;]).apply(np.linalg.inv(k)@np.array([…</pre><details><summary>full code (6 lines) and output</summary><pre>import numpy as np,json
+from scipy.spatial.transform import Rotation as R
+p=&#x27;observations/20261113T155131Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;zed_wrist_depth.npy&#x27;);k=np.array(s[&#x27;zed_wrist_info&#x27;][&#x27;k&#x27;]).reshape(3,3);t=s[&#x27;zed_wrist_left_camera_optical_frame&#x27;]
+for u,v in [(510,200),(510,300)]:
+ z=np.nanmedian(d[v-3:v+4,u-3:u+4]);print(R.from_quat(t[&#x27;q&#x27;]).apply(np.linalg.inv(k)@np.array([u,v,1])*z)+t[&#x27;p&#x27;])
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.07 0.7071068 0.7071068 0 0 5 --at tcp</pre><pre class="out">position=0.0070 rad reached_goal=True stalled=False (status 4)
+
+/usr/lib/python3/dist-packages/numpy/lib/nanfunctions.py:1119: RuntimeWarning: All-NaN slice encountered
+  r, k = function_base._ureduce(a, func=_nanmedian, axis=axis, out=out,
+[nan nan nan]
+[ 0.42701655 -0.04193866  0.05157821]</pre></details></div><div class="step k-move" data-t="468.0" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">07:47</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.035 0.7071068 0.7071068 0 0 4 --at tcp</pre></div><div class="step k-gripper" data-t="490.3" data-kind="Gripper" data-label="Closes the gripper"><span class="t">08:10</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div><div class="step k-move" data-t="501.6" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">08:21</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.06 0.7071068 0.7071068 0 0 4 --at tcp</pre></div><div class="step k-analysis" data-t="518.1" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">08:38</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json
+s=json.load(open(&#x27;observations/20261113T155243Z/state.json&#x27;));print(s[&#x27;joints&#x27;][&#x27;robotiq_85_lef…</pre><details><summary>full code (2 lines) and output</summary><pre>import json
+s=json.load(open(&#x27;observations/20261113T155243Z/state.json&#x27;));print(s[&#x27;joints&#x27;][&#x27;robotiq_85_left_knuckle_joint&#x27;])</pre><pre class="out">0.4785343612334802</pre></details></div><div class="step k-analysis" data-t="536.4" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">08:56</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+im=cv2.imread(&#x27;observations/20261113T155243Z/d405_side_color.png&#x27;);cv2.imwrite(&#x27;observations/si…</pre><details><summary>full code (2 lines)</summary><pre>import cv2
+im=cv2.imread(&#x27;observations/20261113T155243Z/d405_side_color.png&#x27;);cv2.imwrite(&#x27;observations/side_upright.png&#x27;,cv2.rotate(im,cv2.ROTATE_90_COUNTERCLOCKWISE))</pre></details></div><div class="step k-analysis" data-t="542.2" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">09:02</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import cv2
+im=cv2.imread(&#x27;observations/20261113T155243Z/d405_side_color.png&#x27;);cv2.imwrite(&#x27;observations/si…</pre><details><summary>full code (2 lines)</summary><pre>import cv2
+im=cv2.imread(&#x27;observations/20261113T155243Z/d405_side_color.png&#x27;);cv2.imwrite(&#x27;observations/side_upright.png&#x27;,cv2.rotate(im,cv2.ROTATE_90_CLOCKWISE))</pre></details></div><div class="step k-gripper" data-t="573.2" data-kind="Gripper" data-label="Opens the gripper"><span class="t">09:33</span><span class="dot"></span><span><span class="tag">Gripper</span>Opens the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py open</pre></div></div><div class="phase"><div class="say" data-t="581.1"><span class="t">09:41</span><span>“The second grasp also slid off the upper part of the bottle. I checked the gripper geometry: its reported pinch point sits below the middle of the finger pads. I’m accounting for that offset in the next approach.”</span></div><div class="step k-move" data-t="582.1" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">09:42</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.01 0.7071068 0.7071068 0 0 5 --at tcp</pre></div><div class="step k-gripper" data-t="599.2" data-kind="Gripper" data-label="Closes the gripper"><span class="t">09:59</span><span class="dot"></span><span><span class="tag">Gripper</span>Closes the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py closed</pre></div><div class="step k-move" data-t="612.0" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">10:12</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.04 0.7071068 0.7071068 0 0 4 --at tcp</pre></div><div class="step k-analysis" data-t="628.8" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">10:28</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import json
+s=json.load(open(&#x27;observations/20261113T155434Z/state.json&#x27;));print(s[&#x27;joints&#x27;][&#x27;robotiq_85_lef…</pre><details><summary>full code (2 lines) and output</summary><pre>import json
+s=json.load(open(&#x27;observations/20261113T155434Z/state.json&#x27;));print(s[&#x27;joints&#x27;][&#x27;robotiq_85_left_knuckle_joint&#x27;])</pre><pre class="out">0.4715484581497798</pre></details></div><div class="step k-move" data-t="633.6" data-kind="Motion" data-label="Moves the hand"><span class="t">10:33</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.08 0.7071068 0.7071068 0 0 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="652.0"><span class="t">10:51</span><span>“The bottle is now visibly clear of the table, and the gripper opening has stayed steady. I’ll raise it further for clearance and rotate it in small steps.”</span></div><div class="step k-move" data-t="653.0" data-kind="Motion" data-label="Moves the hand in 2 small steps, checking fresh camera images"><span class="t">10:53</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 2 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.13 0.7071068 0.7071068 0 0 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.19 0.7071068 0.7071068 0 0 5 --at tcp</pre></div><div class="step k-move" data-t="674.7" data-kind="Motion" data-label="Moves the hand in 3 small steps, checking fresh camera images"><span class="t">11:14</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 3 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.105 0.7071068 0.7071068 0 0 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.17 0.7071068 0.7071068 0 0 5 --at tcp</pre><details><summary>all commands (3)</summary><pre>python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.105 0.7071068 0.7071068 0 0 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.17 0.7071068 0.7071068 0 0 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.7071068 0.7071068 0 0 5 --at tcp</pre></details></div><div class="step k-analysis" data-t="706.9" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">11:46</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">p=&#x27;scripts/observe.py&#x27;
+s=open(p).read();s=s.replace(&quot;if len(got)==10 and time.monotonic()&gt;end-5:break&quot;,&quot;if len(got)==1…
+open(p,&#x27;w&#x27;).write(s)</pre><details><summary>full code (3 lines) and output</summary><pre>p=&#x27;scripts/observe.py&#x27;
+s=open(p).read();s=s.replace(&quot;if len(got)==10 and time.monotonic()&gt;end-5:break&quot;,&quot;if len(got)==10 and b.can_transform(&#x27;panda_link0&#x27;,&#x27;robotiq_pinch&#x27;,Time()) and b.can_transform(&#x27;panda_link0&#x27;,&#x27;zed_wrist_left_camera_optical_frame&#x27;,Time()):break&quot;)
+open(p,&#x27;w&#x27;).write(s)</pre><pre class="out">ik_solution {&quot;seed&quot;: {&quot;panda_joint1&quot;: 1.9517212941339894, &quot;panda_joint2&quot;: 0.401838632168326, &quot;panda_joint3&quot;: -2.056419046736755, &quot;panda_joint4&quot;: -2.5547960944096637, &quot;panda_joint5&quot;: 0.47622133894546403, &quot;panda_joint6&quot;: 2.2938146621588573, &quot;panda_joint7&quot;: -2.0274883053567674}, &quot;solution&quot;: {&quot;panda_joint1&quot;: 2.0210439633356967, &quot;panda_joint2&quot;: 0.5193394649489401, &quot;panda_joint3&quot;: -2.187198523083956, &quot;panda_joint4&quot;: -2.4750334538802155, &quot;panda_joint5&quot;: 0.4883491291702421, &quot;panda_joint6&quot;: 2.100094713557243, &quot;panda_joint7&quot;: -2.067109840151734, &quot;robotiq_85_left_inner_knuckle_joint&quot;: 0.4715484581497798, &quot;robotiq_85_left_knuckle_joint&quot;: 0.4715484581497798, &quot;robotiq_85_left_finger_tip_joint&quot;: -0.4715484581497798, &quot;robotiq_85_right_inner_knuckle_joint&quot;: -0.4715484581497798, &quot;robotiq_85_right_knuckle_joint&quot;: -0.4715484581497798, &quot;robotiq_85_right_finger_tip_joint&quot;: 0.4715484581497798}, &quot;hand_target&quot;: [0.43, -0.05, 0.3930000173472685, 0.7071068, 0.7071068, 0.0, 0.0]}
+trajectory_target {&quot;joints&quot;: [&quot;panda_joint1&quot;, &quot;panda_joint2&quot;, &quot;panda_joint3&quot;, &quot;panda_joint4&quot;, &quot;panda_joint5&quot;, &quot;panda_joint6&quot;, &quot;panda_joint7&quot;], &quot;current&quot;: {&quot;panda_joint1&quot;: 1.9517221037937476, &quot;panda_joint2&quot;: 0.4018412653790663, &quot;panda_joint3&quot;: -2.0564157058648895, &quot;panda_joint4&quot;: -2.5547976856342234, &quot;panda_joint5&quot;: 0.47622337789005703, &quot;panda_joint6&quot;: 2.2938121503495137, &quot;panda_joint7&quot;: -2.0275077433593873}, &quot;target&quot;: [2.021044, 0.519339, -2.187199, -2.475033, 0.488349, 2.100095, -2.06711], &quot;seconds&quot;: 5.0}
+done error_code=0
+largest gap to target: 0.0188 rad (panda_joint7)</pre></details></div><div class="step k-analysis" data-t="712.4" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">11:52</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">from scipy.spatial.transform import Rotation as R
+for a in [15,30,45,60,75,90]:print(a,(R.from_euler(&#x27;x&#x27;,-a,degrees=True)*R.from_quat([.7071068,.…</pre><details><summary>full code (2 lines)</summary><pre>from scipy.spatial.transform import Rotation as R
+for a in [15,30,45,60,75,90]:print(a,(R.from_euler(&#x27;x&#x27;,-a,degrees=True)*R.from_quat([.7071068,.7071068,0,0])).as_quat())</pre></details></div></div><div class="phase"><div class="say" data-t="717.6"><span class="t">11:57</span><span>“The bottle is securely held at a safe height. I’m rotating it so the cap points upward, then I’ll lower the base onto the clear patch of table where it was lying.”</span></div><div class="step k-move" data-t="723.5" data-kind="Motion" data-label="Moves the hand in 2 small steps, checking fresh camera images"><span class="t">12:03</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 2 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.70105738 0.70105738 -0.09229596 0.0922…
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.6830127 0.6830127 -0.1830127 0.1830127…</pre><details><summary>all commands</summary><pre>python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.70105738 0.70105738 -0.09229596 0.09229596 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.6830127 0.6830127 -0.1830127 0.1830127 5 --at tcp</pre></details></div><div class="step k-move" data-t="760.1" data-kind="Motion" data-label="Moves the hand in 4 small steps, checking fresh camera images"><span class="t">12:40</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand in 4 small steps, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.65328148 0.65328148 -0.27059805 0.2705…
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.61237244 0.61237244 -0.35355339 0.3535…</pre><details><summary>all commands (4)</summary><pre>python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.65328148 0.65328148 -0.27059805 0.27059805 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.61237244 0.61237244 -0.35355339 0.35355339 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.56098553 0.56098553 -0.43045933 0.43045933 5 --at tcp
+python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.23 0.5 0.5 -0.5 0.5 5 --at tcp</pre></details></div></div><div class="phase"><div class="say" data-t="805.2"><span class="t">13:25</span><span>“The rotation is nearly complete, and the bottle has stayed in the gripper. Next I’ll check its base clearance and lower it gently before releasing.”</span></div><div class="step k-analysis" data-t="851.0" data-kind="Analysis" data-label="Runs its own analysis code"><span class="t">14:11</span><span class="dot"></span><span><span class="tag">Analysis</span>Runs its own analysis code</span><pre class="peek">import numpy as np,json
+p=&#x27;observations/20261113T155744Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;d405_depth.np…
+for u,v in [(408,320),(408,328),(407,350),(390,360),(500,330),(330,330)]:
+ z=np.median(d[v-2:v+3,u-2:u+3]);pt=r@(np.linalg.inv(k)@np.array([u,v,1])*z)+t;print(u,v,z,pt,&#x27;…</pre><details><summary>full code (4 lines) and output</summary><pre>import numpy as np,json
+p=&#x27;observations/20261113T155744Z/&#x27;;s=json.load(open(p+&#x27;state.json&#x27;));d=np.load(p+&#x27;d405_depth.npy&#x27;)*.001;k=np.array(s[&#x27;d405_info&#x27;][&#x27;k&#x27;]).reshape(3,3);reg=json.load(open(&#x27;observations/20261113T154609Z/approx_d405_registration.json&#x27;));r=np.array(reg[&#x27;R&#x27;]);t=np.array(reg[&#x27;t&#x27;])
+for u,v in [(408,320),(408,328),(407,350),(390,360),(500,330),(330,330)]:
+ z=np.median(d[v-2:v+3,u-2:u+3]);pt=r@(np.linalg.inv(k)@np.array([u,v,1])*z)+t;print(u,v,z,pt,&#x27;height&#x27;,pt[2]-reg[&#x27;table_z&#x27;])</pre><pre class="out">408 320 0.733 [ 0.42009063 -0.01293518  0.09162953] height 0.11062342348193455
+408 328 0.77 [ 0.39721126 -0.01405597  0.05577581] height 0.07476970360166352
+407 350 0.873 [ 0.33672219 -0.01897232 -0.04999785] height -0.031003956480819772
+390 360 0.8170000000000001 [ 0.38970569 -0.04813216 -0.02886611] height -0.009872214417451453
+500 330 0.718 [0.43413112 0.14169431 0.08922282] height 0.1082167140727156
+330 330 0.902 [ 0.30095609 -0.18297199 -0.03597739] height -0.01698348895646229</pre></details></div><div class="step k-move" data-t="857.1" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">14:17</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.18 0.5 0.5 -0.5 0.5 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="906.0"><span class="t">15:06</span><span>“The bottle is upright and still supported by the gripper. I’m lowering it the last few centimetres and checking for contact before opening the fingers.”</span></div><div class="step k-move" data-t="906.7" data-kind="Motion" data-label="Moves the hand"><span class="t">15:06</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.145 0.5 0.5 -0.5 0.5 5 --at tcp</pre></div><div class="step k-move" data-t="934.2" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">15:34</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.13 0.5 0.5 -0.5 0.5 4 --at tcp</pre></div><div class="step k-move" data-t="963.3" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">16:03</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 -0.05 0.122 0.5 0.5 -0.5 0.5 4 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="977.1"><span class="t">16:17</span><span>“The base is now very close to the table. I’m making a final small lowering motion, then I’ll release the bottle and move the gripper clear to check that it stands on its own.”</span></div><div class="step k-gripper" data-t="990.3" data-kind="Gripper" data-label="Opens the gripper"><span class="t">16:30</span><span class="dot"></span><span><span class="tag">Gripper</span>Opens the gripper</span><pre class="peek">python3 /robot/tools/action/gripper_cmd.py open</pre></div><div class="step k-move" data-t="1004.8" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">16:44</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 0.01 0.13 0.5 0.5 -0.5 0.5 5 --at tcp</pre></div><div class="step k-move" data-t="1039.3" data-kind="Motion" data-label="Moves the hand, checking fresh camera images"><span class="t">17:19</span><span class="dot"></span><span><span class="tag">Motion</span>Moves the hand, checking fresh camera images</span><pre class="peek">python3 /robot/tools/action/ik_move.py 0.43 0.025 0.21 0.5 0.5 -0.5 0.5 5 --at tcp</pre></div></div><div class="phase"><div class="say" data-t="1044.2"><span class="t">17:24</span><span>“The bottle is standing on its own after release, with the gripper clear of it. I’m taking final verification images and saving the session notes.”</span></div><div class="step k-gripper" data-t="1051.8" data-kind="Gripper" data-label="Sets the gripper to /robot_description|ik_move|fjt_send|gripper_cmd&#x27;"><span class="t">17:31</span><span class="dot"></span><span><span class="tag">Gripper</span>Sets the gripper to /robot_description|ik_move|fjt_send|gripper_cmd&#x27;</span><pre class="peek">ps -eo pid,args | rg &#x27;ros2 topic echo /robot_description|ik_move|fjt_send|gripper_cmd&#x27;</pre></div></div><div class="phase"><div class="say" data-t="1127.7"><span class="t">18:47</span><span>“The pink bottle is upright and stable on the table. I released it, moved the gripper clear, and verified it remained standing. Observations and continuation notes are saved.”</span></div></div></div>
+<div class="player"><video controls playsinline muted preload="metadata" data-speed="10" src="videos/pink-bottle-upright-001.mp4"></video>
+<div class="now"><div class="k">Current step</div>Play the video or click a step.</div></div>
+</div>
+</main>
+<script>
+const v=document.querySelector('video'), speed=+v.dataset.speed, steps=[...document.querySelectorAll('[data-t]')];
+const now=document.querySelector('.now'), trace=document.querySelector('.trace');
+function seek(t){
+  const go=()=>{v.currentTime=Math.min(t/speed, v.duration-0.05); v.play().catch(()=>{});};
+  if(v.readyState>=1) go(); else { v.addEventListener('loadedmetadata',go,{once:true}); v.load(); }
+}
+steps.forEach(s=>s.addEventListener('click',e=>{if(e.target.closest('details'))return; seek(+s.dataset.t);}));
+let last=null;
+v.addEventListener('timeupdate',()=>{
+  const t=v.currentTime*speed; let cur=null;
+  for(const s of steps){ if(+s.dataset.t<=t+0.5 && s.classList.contains('step')) cur=s; }
+  if(cur===last) return; last=cur;
+  steps.forEach(s=>s.classList.toggle('active',s===cur));
+  if(cur){ now.innerHTML='<div class="k">'+cur.dataset.kind+' · '+cur.querySelector('.t').textContent+'</div>'+cur.dataset.label;
+    const r=cur.getBoundingClientRect(), c=trace.getBoundingClientRect();
+    if(trace.scrollHeight>trace.clientHeight && (r.top<c.top||r.bottom>c.bottom)) trace.scrollTop+=r.top-c.top-c.height/3; }
+});
+</script>
+</body>
+</html>
