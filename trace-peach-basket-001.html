@@ -63,7 +63,7 @@ pre.out{color:var(--muted)}
 <a class="back" href="index.html#task-6">← All trials</a>
 <h1>Put a peach in the basket</h1>
 <div class="meta"><strong>Trial 1</strong><span class="badge ok">Success</span><span>12:56 end-to-end time</span></div>
-
+<p class="intro">The agent writes its own safety checks into its motion program move_near.py: before moving the arm, it verifies its kinematic model against live TF, bounds each step and joint change, and validates 11 sampled states along the path with MoveIt (04:05 in the execution trace).</p>
 <p class="intro">Key commands and code the agent wrote and ran in this trial, grouped under the status notes it wrote while working. Click a step to jump the video to that moment; the clock matches the counter in the video.</p>
 <p class="legend"><span class="sw own"></span>Blue: code the agent writes and runs <span class="sw tool"></span>Orange: starter tools provided in the workspace <span class="sw grip"></span>Green: gripper commands</p>
 <div class="layout">
